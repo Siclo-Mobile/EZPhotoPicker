@@ -22,6 +22,8 @@ interface PhotoIntentHelperContract {
         void showPickPhotoFromGalleryError();
 
         void finishWithNoResult();
+
+        void requestCameraPermission();
     }
 
     interface Presenter{
@@ -29,6 +31,10 @@ interface PhotoIntentHelperContract {
         void onCreate(Bundle savedInstanceState) throws PhotoIntentException;
 
         void onPhotoPickedFromGallery(Intent data);
+
+        void onRequestPermissionGranted();
+
+        void onRequestPermissionDenied();
     }
 
 }

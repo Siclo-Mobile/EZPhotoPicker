@@ -9,8 +9,8 @@ import android.os.Message;
 import java.io.IOException;
 import java.util.UUID;
 
-import siclo.com.photointenthelper.models.PhotoIntentHelperConfig;
 import siclo.com.photointenthelper.models.PhotoIntentException;
+import siclo.com.photointenthelper.models.PhotoIntentHelperConfig;
 import siclo.com.photointenthelper.models.PhotoSource;
 import siclo.com.photointenthelper.storage.PhotoGenerator;
 import siclo.com.photointenthelper.storage.PhotoIntentHelperStorage;
@@ -64,7 +64,13 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
         if(isOpenedPhotoPick){
             return;
         }
-        onPickPhotoWithGalery();
+
+        if(photoIntentHelperConfig.photoSource == PhotoSource.CAMERA){
+            view.requestCameraPermission();
+        }else{
+            view.openGallery();
+        }
+
     }
 
     @Override
@@ -87,6 +93,16 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
                 photoPickHandler.sendEmptyMessage(STORE_SUCCESS_MSG);
             }
         }).start();
+    }
+
+    @Override
+    public void onRequestPermissionGranted() {
+        onPickPhotoWithGalery();
+    }
+
+    @Override
+    public void onRequestPermissionDenied() {
+        view.finishWithNoResult();
     }
 
     Handler photoPickHandler = new Handler(new Handler.Callback() {
