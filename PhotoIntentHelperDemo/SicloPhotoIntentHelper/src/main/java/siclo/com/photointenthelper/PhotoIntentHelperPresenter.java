@@ -68,9 +68,8 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
         if(photoIntentHelperConfig.photoSource == PhotoSource.CAMERA){
             view.requestCameraPermission();
         }else{
-            view.openGallery();
+            onPickPhotoWithGalery();
         }
-
     }
 
     @Override
@@ -96,12 +95,12 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
     }
 
     @Override
-    public void onRequestPermissionGranted() {
-        onPickPhotoWithGalery();
+    public void onRequestCameraPermissionGranted() {
+        onPickPhotoWithCamera();
     }
 
     @Override
-    public void onRequestPermissionDenied() {
+    public void onRequestCameraPermissionDenied() {
         view.finishWithNoResult();
     }
 
@@ -124,7 +123,8 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
     });
 
     private void onPickPhotoWithCamera() {
-
+        isOpenedPhotoPick = true;
+        view.openCamera();
     }
 
     private void onPickPhotoWithGalery() {

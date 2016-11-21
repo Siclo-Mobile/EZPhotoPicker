@@ -24,6 +24,8 @@ interface PhotoIntentHelperContract {
         void finishWithNoResult();
 
         void requestCameraPermission();
+
+        void openCamera();
     }
 
     interface Presenter{
@@ -32,9 +34,9 @@ interface PhotoIntentHelperContract {
 
         void onPhotoPickedFromGallery(Intent data);
 
-        void onRequestPermissionGranted();
+        void onRequestCameraPermissionGranted();
 
-        void onRequestPermissionDenied();
+        void onRequestCameraPermissionDenied();
     }
 
 }

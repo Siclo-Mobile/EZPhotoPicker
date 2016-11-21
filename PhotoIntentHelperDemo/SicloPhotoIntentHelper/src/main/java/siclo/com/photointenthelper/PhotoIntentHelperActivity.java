@@ -96,17 +96,22 @@ public class PhotoIntentHelperActivity
     }
 
     @Override
+    public void openCamera() {
+
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case 1: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    presenter.onRequestPermissionGranted();
+                    presenter.onRequestCameraPermissionGranted();
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
                 } else {
-                    presenter.onRequestPermissionDenied();
+                    presenter.onRequestCameraPermissionDenied();
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                     Toast.makeText(PhotoIntentHelperActivity.this,
