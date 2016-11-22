@@ -1,6 +1,7 @@
 package siclo.com.photointenthelper;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import siclo.com.photointenthelper.models.PhotoIntentException;
@@ -25,7 +26,9 @@ interface PhotoIntentHelperContract {
 
         void requestCameraPermission();
 
-        void openCamera();
+        void openCamera(Uri expotedPhotoUri);
+
+        void notifyGalleryDataChanged(Uri exportedPhotoUri);
     }
 
     interface Presenter{
@@ -37,6 +40,10 @@ interface PhotoIntentHelperContract {
         void onRequestCameraPermissionGranted();
 
         void onRequestCameraPermissionDenied();
+
+        void onDestroy();
+
+        void onPhotoPickedFromCamera();
     }
 
 }

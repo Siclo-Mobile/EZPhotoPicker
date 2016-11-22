@@ -5,7 +5,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
@@ -30,6 +32,7 @@ public class PhotoIntentHelperActivity
         extends AppCompatActivity implements PhotoIntentHelperContract.View {
 
     private static final int PICK_PHOTO_FROM_GALLERY = 1001;
+    private static final int PICK_PHOTO_FROM_CAMERA = 1002;
     PhotoIntentHelperConfig photoIntentHelperConfig;
 
     PhotoIntentHelperContract.Presenter presenter;
@@ -96,8 +99,15 @@ public class PhotoIntentHelperActivity
     }
 
     @Override
-    public void openCamera() {
+    public void openCamera(Uri expotedPhotoUri) {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, expotedPhotoUri);
+        startActivityForResult(takePictureIntent, PICK_PHOTO_FROM_CAMERA);
+    }
 
+    @Override
+    public void notifyGalleryDataChanged(Uri exportedPhotoUri) {
+        getContentResolver().notifyChange(exportedPhotoUri, null);
     }
 
     @Override
@@ -128,24 +138,23 @@ public class PhotoIntentHelperActivity
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_CANCELED) {
+            finish();
+            return;
+        }
+
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == PICK_PHOTO_FROM_GALLERY) {
                 presenter.onPhotoPickedFromGallery(data);
+            } else if (requestCode == PICK_PHOTO_FROM_CAMERA) {
+                presenter.onPhotoPickedFromCamera();
             }
-//            else if (requestCode == PhotoFragment.PICK_PHOTO_FROM_CAMERA) {
-//                getContext().getContentResolver().notifyChange(PhotoUtils.currentCapturingPhotoURI, null);
-//                ContentResolver cr = getContext().getContentResolver();
-//                Bitmap bitmap;
-//                try
-//                {
-//                    bitmap = PhotoUtils.generatePhotoWithValue(PhotoUtils.currentCapturingPhotoURI, getResources().getDimensionPixelSize(R.dimen.image_adjust_size));
-//                    presenter.onPhotoPicked(bitmap);
-//                }
-//                catch (Exception e)
-//                {
-//                    Log.d("TCV", "Failed to load", e);
-//                }
-//            }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        presenter.onDestroy();
     }
 }

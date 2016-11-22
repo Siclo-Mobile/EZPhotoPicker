@@ -30,6 +30,15 @@ public class MainActivity extends AppCompatActivity {
                 PhotoIntentHelper.startPhotoIntentHelperActivity(MainActivity.this, config);
             }
         });
+        findViewById(R.id.bt_camera).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PhotoIntentHelperConfig config = new PhotoIntentHelperConfig();
+                config.photoSource = PhotoSource.CAMERA;
+                config.scaleSize = 1000;
+                PhotoIntentHelper.startPhotoIntentHelperActivity(MainActivity.this, config);
+            }
+        });
     }
 
     @Override

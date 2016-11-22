@@ -2,10 +2,13 @@ package siclo.com.photointenthelper;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
@@ -27,6 +30,7 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
      */
     private static boolean isStoringPhoto = false;
     private static boolean isOpenedPhotoPick = false;
+    private static Uri exportedPhotoUri ;
 
     private static final int STORE_SUCCESS_MSG = 0;
     private static final int STORE_FAIL_MSG = 1;
@@ -36,7 +40,6 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
     private PhotoGenerator photoGenerator;
     private PhotoIntentHelperConfig photoIntentHelperConfig;
     private String randomPhotoName;
-    Bitmap pickingPhoto;
 
     PhotoIntentHelperPresenter(PhotoIntentHelperContract.View view, PhotoGenerator photoGenerator, PhotoIntentHelperStorage photoIntentHelperStorage, PhotoIntentHelperConfig photoIntentHelperConfig) {
         this.view = view;
@@ -49,11 +52,6 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
     public void onCreate(Bundle savedInstanceState) throws PhotoIntentException {
         if (photoIntentHelperConfig == null) {
             throw PhotoIntentException.getNullPhotoPickConfigException();
-        }
-
-        if (photoIntentHelperConfig.photoSource == PhotoSource.CAMERA) {
-            onPickPhotoWithCamera();
-            return;
         }
 
         if(isStoringPhoto){
@@ -74,24 +72,40 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
 
     @Override
     public void onPhotoPickedFromGallery(final Intent data) {
+        final Uri photoUri = data.getData();
+        onPhotoPicked(photoUri);
+    }
+
+    private void onPhotoPicked(final Uri photoUri) {
         isOpenedPhotoPick =false;
         isStoringPhoto = true;
         view.showLoading();
+        processPickedUriInBackground(photoUri);
+    }
+
+    private void processPickedUriInBackground(final Uri photoUri) {
         new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    pickingPhoto = photoGenerator.generatePhotoWithValue(data.getData(), photoIntentHelperConfig.scaleSize);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    photoPickHandler.sendEmptyMessage(STORE_FAIL_MSG);
+                @Override
+                public void run() {
+                    try {
+                        Bitmap pickingPhoto = photoGenerator.generatePhotoWithValue(photoUri, photoIntentHelperConfig.scaleSize);
+                        randomPhotoName = UUID.randomUUID().toString();
+                        photoIntentHelperStorage.storeLastetStoredPhotoName(randomPhotoName);
+                        photoIntentHelperStorage.storePhotoBitmap(pickingPhoto, photoIntentHelperConfig.internalStorageDir, randomPhotoName);
+                        photoPickHandler.sendEmptyMessage(STORE_SUCCESS_MSG);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        photoPickHandler.sendEmptyMessage(STORE_FAIL_MSG);
+                    }
+
                 }
-                randomPhotoName = UUID.randomUUID().toString();
-                photoIntentHelperStorage.storeLastetStoredPhotoName(randomPhotoName);
-                photoIntentHelperStorage.storePhotoBitmap(pickingPhoto, photoIntentHelperConfig.internalStorageDir, randomPhotoName);
-                photoPickHandler.sendEmptyMessage(STORE_SUCCESS_MSG);
-            }
         }).start();
+    }
+
+    @Override
+    public void onPhotoPickedFromCamera() {
+        view.notifyGalleryDataChanged(exportedPhotoUri);
+        onPhotoPicked(exportedPhotoUri);
     }
 
     @Override
@@ -103,6 +117,14 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
     public void onRequestCameraPermissionDenied() {
         view.finishWithNoResult();
     }
+
+    @Override
+    public void onDestroy() {
+        isStoringPhoto = false;
+        isOpenedPhotoPick = false;
+    }
+
+
 
     Handler photoPickHandler = new Handler(new Handler.Callback() {
         @Override
@@ -124,7 +146,31 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
 
     private void onPickPhotoWithCamera() {
         isOpenedPhotoPick = true;
-        view.openCamera();
+        prepareBeforeCapturing();
+//        Uri expotedPhotoUri = Uri.parse(exportedPhotoPath);
+        view.openCamera(exportedPhotoUri);
+    }
+
+    private void prepareBeforeCapturing() {
+        try {
+            File tempDir = prepareTempDir();
+            String exportedPhotoPath = tempDir.getAbsolutePath()+"/temp_photo.jpg";
+            File photoFile = new File(exportedPhotoPath);
+            exportedPhotoUri = Uri.fromFile(photoFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private File prepareTempDir() throws Exception
+    {
+        File tempDir= Environment.getExternalStorageDirectory();
+        tempDir=new File(tempDir.getAbsolutePath()+"/.temp/");
+        if(!tempDir.exists())
+        {
+            tempDir.mkdirs();
+        }
+        return tempDir;
     }
 
     private void onPickPhotoWithGalery() {
