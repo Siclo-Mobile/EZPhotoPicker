@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,12 +25,12 @@ class PhotoInternalStorage {
 
     public void storePhotoBitmap(Bitmap bitmapImage, String internalStorageDir, String fileName) {
         File photoPath = getPhotoByName(internalStorageDir, fileName);
-
         FileOutputStream fos;
         try {
             fos = new FileOutputStream(photoPath);
             // Use the compress method on the BitMap object to write image to the OutputStream
             bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+
             fos.close();
         } catch (Exception e) {
         }

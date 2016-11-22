@@ -5,20 +5,19 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import siclo.com.photointenthelper.models.PhotoIntentException;
 import siclo.com.photointenthelper.models.PhotoIntentHelperConfig;
 import siclo.com.photointenthelper.storage.PhotoGenerator;
+import siclo.com.photointenthelper.storage.PhotoIntentContentProvider;
 import siclo.com.photointenthelper.storage.PhotoIntentHelperStorage;
 
 import static siclo.com.photointenthelper.models.PhotoIntentConstants.PHOTO_PICK_CONFIG_KEY;
@@ -44,7 +43,6 @@ public class PhotoIntentHelperActivity
         super.onCreate(savedInstanceState);
 
         int screenOrientation = getIntent().getIntExtra(SCREEN_ORIENTATION, ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-        Log.i("TCV", "screenOrientation " + screenOrientation);
         setRequestedOrientation(screenOrientation);
 
         setContentView(R.layout.photo_pick_activity);
@@ -99,15 +97,10 @@ public class PhotoIntentHelperActivity
     }
 
     @Override
-    public void openCamera(Uri expotedPhotoUri) {
+    public void openCamera() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, expotedPhotoUri);
+        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, PhotoIntentContentProvider.CONTENT_URI);
         startActivityForResult(takePictureIntent, PICK_PHOTO_FROM_CAMERA);
-    }
-
-    @Override
-    public void notifyGalleryDataChanged(Uri exportedPhotoUri) {
-        getContentResolver().notifyChange(exportedPhotoUri, null);
     }
 
     @Override
@@ -147,7 +140,7 @@ public class PhotoIntentHelperActivity
             if (requestCode == PICK_PHOTO_FROM_GALLERY) {
                 presenter.onPhotoPickedFromGallery(data);
             } else if (requestCode == PICK_PHOTO_FROM_CAMERA) {
-                presenter.onPhotoPickedFromCamera();
+                presenter.onPhotoPickedFromCamera(getFilesDir());
             }
         }
     }

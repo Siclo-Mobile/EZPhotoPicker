@@ -74,6 +74,16 @@ public class PhotoGenerator {
         //SAVE ORIGINAL PHOTO
         bmOptions.inSampleSize = Math.max(photoW / maxSize, photoH / maxSize);
         Bitmap generatingPhotoBitmap = BitmapFactory.decodeStream(is, null, bmOptions);
+
+        photoW = generatingPhotoBitmap.getWidth();
+        photoH = generatingPhotoBitmap.getHeight();
+
+        if (photoW > maxSize || photoH > maxSize) {
+            float scaleSize = Math.max((float)photoW / maxSize, (float)photoH / maxSize);
+            generatingPhotoBitmap = Bitmap.createScaledBitmap(generatingPhotoBitmap,
+                    (int) (photoW / scaleSize), (int) (photoH / scaleSize),
+                    true);
+        }
         if (rotate == 0) {
             return generatingPhotoBitmap;
         }

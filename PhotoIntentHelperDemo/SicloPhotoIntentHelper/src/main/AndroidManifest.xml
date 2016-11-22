@@ -6,6 +6,17 @@
         <activity android:name=".PhotoIntentHelperActivity"
             android:theme="@style/Theme.Transparent">
         </activity>
+
+        <provider
+
+            android:name=".storage.PhotoIntentContentProvider"
+
+            android:authorities="siclo.com.photointenthelper"
+
+            android:enabled="true"
+
+            android:exported="true" />
+
     </application>
 
 </manifest>

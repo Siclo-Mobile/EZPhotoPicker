@@ -16,6 +16,7 @@ import siclo.com.photointenthelper.models.PhotoIntentException;
 import siclo.com.photointenthelper.models.PhotoIntentHelperConfig;
 import siclo.com.photointenthelper.models.PhotoSource;
 import siclo.com.photointenthelper.storage.PhotoGenerator;
+import siclo.com.photointenthelper.storage.PhotoIntentContentProvider;
 import siclo.com.photointenthelper.storage.PhotoIntentHelperStorage;
 
 /**
@@ -30,7 +31,6 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
      */
     private static boolean isStoringPhoto = false;
     private static boolean isOpenedPhotoPick = false;
-    private static Uri exportedPhotoUri ;
 
     private static final int STORE_SUCCESS_MSG = 0;
     private static final int STORE_FAIL_MSG = 1;
@@ -92,6 +92,7 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
                         randomPhotoName = UUID.randomUUID().toString();
                         photoIntentHelperStorage.storeLastetStoredPhotoName(randomPhotoName);
                         photoIntentHelperStorage.storePhotoBitmap(pickingPhoto, photoIntentHelperConfig.internalStorageDir, randomPhotoName);
+
                         photoPickHandler.sendEmptyMessage(STORE_SUCCESS_MSG);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -103,9 +104,11 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
     }
 
     @Override
-    public void onPhotoPickedFromCamera() {
-        view.notifyGalleryDataChanged(exportedPhotoUri);
-        onPhotoPicked(exportedPhotoUri);
+    public void onPhotoPickedFromCamera(File internalDir) {
+//        view.notifyGalleryDataChanged(exportedPhotoUri);
+        File photoFile = new File(internalDir, PhotoIntentContentProvider.TEMP_PHOTO_NAME);
+        Uri photoUri = Uri.fromFile(photoFile);
+        onPhotoPicked(photoUri);
     }
 
     @Override
@@ -146,21 +149,19 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
 
     private void onPickPhotoWithCamera() {
         isOpenedPhotoPick = true;
-        prepareBeforeCapturing();
-//        Uri expotedPhotoUri = Uri.parse(exportedPhotoPath);
-        view.openCamera(exportedPhotoUri);
+        view.openCamera();
     }
 
-    private void prepareBeforeCapturing() {
-        try {
-            File tempDir = prepareTempDir();
-            String exportedPhotoPath = tempDir.getAbsolutePath()+"/temp_photo.jpg";
-            File photoFile = new File(exportedPhotoPath);
-            exportedPhotoUri = Uri.fromFile(photoFile);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    private void prepareBeforeCapturing() {
+//        try {
+//            File tempDir = prepareTempDir();
+//            String exportedPhotoPath = tempDir.getAbsolutePath()+"/temp_photo.jpg";
+//            File photoFile = new File(exportedPhotoPath);
+//            exportedPhotoUri = Uri.fromFile(photoFile);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     private File prepareTempDir() throws Exception
     {
