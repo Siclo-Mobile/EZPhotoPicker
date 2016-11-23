@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 
+import java.io.IOException;
+
 /**
  * Created by ericta on 11/13/16.
  */
@@ -49,14 +51,20 @@ public class PhotoIntentHelperStorage {
         return pathStorage.loadLastetStoredPhotoDir();
     }
 
-
-    public Bitmap loadLastestStoredPhotoBitmap() {
-        String storedPhotoDir = loadLastetStoredPhotoDir();
-        String storedPhotoName = loadLastestStoredPhotoName();
-        return loadStoredPhotoBitmap(storedPhotoDir, storedPhotoName);
+    public Bitmap loadLastestStoredPhotoBitmap() throws IOException {
+        return loadLastestStoredPhotoBitmap(0);
     }
 
-    public Bitmap loadStoredPhotoBitmap(String storedPhotoDir, String storedPhotoName) {
-        return photoInternalStorage.loadStoredPhotoBitmap(storedPhotoDir, storedPhotoName);
+    public Bitmap loadLastestStoredPhotoBitmap(int maxScaleSize) throws IOException {
+        String storedPhotoDir = loadLastetStoredPhotoDir();
+        String storedPhotoName = loadLastestStoredPhotoName();
+        return loadStoredPhotoBitmap(storedPhotoDir, storedPhotoName, maxScaleSize);
+    }
+    public Bitmap loadStoredPhotoBitmap(String storedPhotoDir, String storedPhotoName) throws IOException {
+        return loadStoredPhotoBitmap(storedPhotoDir, storedPhotoName, 0);
+    }
+
+    public Bitmap loadStoredPhotoBitmap(String storedPhotoDir, String storedPhotoName, int maxScaleSize) throws IOException {
+        return photoInternalStorage.loadStoredPhotoBitmap(storedPhotoDir, storedPhotoName, maxScaleSize);
     }
 }

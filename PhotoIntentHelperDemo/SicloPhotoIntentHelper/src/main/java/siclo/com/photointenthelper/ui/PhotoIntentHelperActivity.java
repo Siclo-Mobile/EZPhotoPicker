@@ -1,4 +1,4 @@
-package siclo.com.photointenthelper;
+package siclo.com.photointenthelper.ui;
 
 import android.Manifest;
 import android.app.Activity;
@@ -13,8 +13,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
+import siclo.com.photointenthelper.R;
 import siclo.com.photointenthelper.models.PhotoIntentException;
-import siclo.com.photointenthelper.models.PhotoIntentHelperConfig;
+import siclo.com.photointenthelper.api.models.PhotoIntentHelperConfig;
 import siclo.com.photointenthelper.storage.PhotoGenerator;
 import siclo.com.photointenthelper.storage.PhotoIntentContentProvider;
 import siclo.com.photointenthelper.storage.PhotoIntentHelperStorage;

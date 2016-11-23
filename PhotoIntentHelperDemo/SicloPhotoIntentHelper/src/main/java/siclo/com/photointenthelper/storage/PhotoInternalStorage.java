@@ -3,16 +3,14 @@ package siclo.com.photointenthelper.storage;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 class PhotoInternalStorage {
 
@@ -26,7 +24,7 @@ class PhotoInternalStorage {
         String type = getMimeType(photoUri);
 
         Bitmap.CompressFormat compressFormat = Bitmap.CompressFormat.JPEG;
-        if("PNG".equalsIgnoreCase(type)){
+        if ("PNG".equalsIgnoreCase(type)) {
             compressFormat = Bitmap.CompressFormat.PNG;
         }
 
@@ -60,18 +58,12 @@ class PhotoInternalStorage {
         return extension;
     }
 
-
-    public Bitmap loadPhoto(String fileName) throws FileNotFoundException {
-        File photoPath = getPhotoByName(null, fileName);
-        Bitmap photo = BitmapFactory.decodeStream(new FileInputStream(photoPath));
-        return photo;
-    }
-
-    public Bitmap loadPhoto(String internalStorageDir, String fileName) throws FileNotFoundException {
+    public Bitmap loadPhoto(String internalStorageDir, String fileName, int maxScaleSize) throws IOException {
         File photoPath = getPhotoByName(internalStorageDir, fileName);
-        Bitmap photo = BitmapFactory.decodeStream(new FileInputStream(photoPath));
-        return photo;
+        PhotoGenerator photoGenerator = new PhotoGenerator(context);
+        return photoGenerator.generatePhotoWithValue(photoPath.getAbsolutePath(), maxScaleSize);
     }
+
 
     @NonNull
     private File getPhotoByName(String internalStorageDir, String attachmentId) {
@@ -87,16 +79,7 @@ class PhotoInternalStorage {
         return new File(file, attachmentId);
     }
 
-    public Bitmap loadStoredPhotoBitmap(String internalStorageDir,String storedPhotoName) {
-        try {
-            return loadPhoto(internalStorageDir, storedPhotoName);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        }
+    public Bitmap loadStoredPhotoBitmap(String internalStorageDir, String storedPhotoName, int maxScaleSize) throws IOException {
+        return loadPhoto(internalStorageDir, storedPhotoName, maxScaleSize);
     }
-
-//    public boolean isAttachmentExist(String attachmentId) {
-//        return getPhotoByName(attachmentId).exists();
-//    }
 }

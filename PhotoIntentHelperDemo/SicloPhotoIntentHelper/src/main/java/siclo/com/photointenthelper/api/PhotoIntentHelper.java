@@ -1,4 +1,4 @@
-package siclo.com.photointenthelper;
+package siclo.com.photointenthelper.api;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -7,10 +7,10 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Surface;
 
-import siclo.com.photointenthelper.models.PhotoIntentHelperConfig;
+import siclo.com.photointenthelper.api.models.PhotoIntentHelperConfig;
+import siclo.com.photointenthelper.ui.PhotoIntentHelperActivity;
 
 import static siclo.com.photointenthelper.models.PhotoIntentConstants.PHOTO_PICK_CONFIG_KEY;
-import static siclo.com.photointenthelper.models.PhotoIntentConstants.PHOTO_PICK_REQUEST_CODE;
 import static siclo.com.photointenthelper.models.PhotoIntentConstants.SCREEN_ORIENTATION;
 
 /**
@@ -18,6 +18,8 @@ import static siclo.com.photointenthelper.models.PhotoIntentConstants.SCREEN_ORI
  */
 
 public class PhotoIntentHelper {
+
+    public static final int PHOTO_PICK_REQUEST_CODE = 9067;
 
     private static final String TAG = PhotoIntentHelper.class.getSimpleName();
 

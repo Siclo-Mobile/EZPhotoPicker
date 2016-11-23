@@ -1,8 +1,10 @@
-package siclo.com.photointenthelper.models;
+package siclo.com.photointenthelper.api.models;
 
 import android.graphics.Bitmap;
 
 import java.io.Serializable;
+
+import siclo.com.photointenthelper.models.PhotoIntentConstants;
 
 /**
  * Created by ericta on 11/13/16.

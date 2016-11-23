@@ -15,3 +15,11 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+#-keepclassmembers class siclo.com.photointenthelper.* {
+#    public <methods>;
+#}
+-keepattributes Exceptions
+-keep public class siclo.com.photointenthelper.api.** {
+  public  *;
+}

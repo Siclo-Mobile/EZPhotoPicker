@@ -1,4 +1,4 @@
-package siclo.com.photointenthelper;
+package siclo.com.photointenthelper.ui;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -15,8 +15,8 @@ import java.util.Date;
 
 import siclo.com.photointenthelper.models.PhotoIntentConstants;
 import siclo.com.photointenthelper.models.PhotoIntentException;
-import siclo.com.photointenthelper.models.PhotoIntentHelperConfig;
-import siclo.com.photointenthelper.models.PhotoSource;
+import siclo.com.photointenthelper.api.models.PhotoIntentHelperConfig;
+import siclo.com.photointenthelper.api.models.PhotoSource;
 import siclo.com.photointenthelper.storage.PhotoGenerator;
 import siclo.com.photointenthelper.storage.PhotoIntentContentProvider;
 import siclo.com.photointenthelper.storage.PhotoIntentHelperStorage;

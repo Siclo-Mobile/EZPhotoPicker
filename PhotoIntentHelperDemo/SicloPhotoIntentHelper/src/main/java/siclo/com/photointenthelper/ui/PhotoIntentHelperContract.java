@@ -1,4 +1,4 @@
-package siclo.com.photointenthelper;
+package siclo.com.photointenthelper.ui;
 
 import android.content.Intent;
 import android.os.Bundle;

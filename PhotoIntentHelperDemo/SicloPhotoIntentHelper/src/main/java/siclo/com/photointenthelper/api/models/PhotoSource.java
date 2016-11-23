@@ -1,4 +1,4 @@
-package siclo.com.photointenthelper.models;
+package siclo.com.photointenthelper.api.models;
 
 import java.io.Serializable;
 

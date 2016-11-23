@@ -7,11 +7,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 
-import siclo.com.photointenthelper.PhotoIntentHelper;
-import siclo.com.photointenthelper.models.PhotoIntentHelperConfig;
-import siclo.com.photointenthelper.models.PhotoIntentConstants;
-import siclo.com.photointenthelper.models.PhotoSource;
-import siclo.com.photointenthelper.storage.PhotoIntentHelperStorage;
+import java.io.IOException;
+
+import siclo.com.photointenthelper.api.PhotoIntentHelper;
+import siclo.com.photointenthelper.api.PhotoIntentStorageLoader;
+import siclo.com.photointenthelper.api.models.PhotoIntentHelperConfig;
+import siclo.com.photointenthelper.api.models.PhotoSource;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 PhotoIntentHelperConfig config = new PhotoIntentHelperConfig();
                 config.photoSource = PhotoSource.GALERY;
-//                config.maxExportingSize = 1000;
+                config.maxExportingSize = 1000;
                 PhotoIntentHelper.startPhotoIntentHelperActivity(MainActivity.this, config);
             }
         });
@@ -35,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 PhotoIntentHelperConfig config = new PhotoIntentHelperConfig();
                 config.photoSource = PhotoSource.CAMERA;
-//                config.maxExportingSize = 1000;
+                config.maxExportingSize = 1000;
                 PhotoIntentHelper.startPhotoIntentHelperActivity(MainActivity.this, config);
             }
         });
@@ -48,9 +50,13 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        if(requestCode == PhotoIntentConstants.PHOTO_PICK_REQUEST_CODE){
-            Bitmap pickedPhoto = PhotoIntentHelperStorage.getInstance(this).loadLastestStoredPhotoBitmap();
-            ivPickedPhoto.setImageBitmap(pickedPhoto);
+        if(requestCode == PhotoIntentHelper.PHOTO_PICK_REQUEST_CODE){
+            try {
+                Bitmap pickedPhoto = new PhotoIntentStorageLoader(this).loadLastestStoredPhotoBitmap();
+                ivPickedPhoto.setImageBitmap(pickedPhoto);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
     }
