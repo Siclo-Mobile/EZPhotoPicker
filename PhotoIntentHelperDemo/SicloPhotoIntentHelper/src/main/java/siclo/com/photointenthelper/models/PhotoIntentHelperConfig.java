@@ -16,6 +16,7 @@ public class PhotoIntentHelperConfig implements Serializable{
      * for eg: "abc/def"
      */
     public String internalStorageDir;
+    public boolean isGenerateUniqueName = false;
     public int maxExportingSize;
     public ExtraAction extraAction;
 

@@ -10,8 +10,10 @@ import android.os.Message;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.UUID;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
+import siclo.com.photointenthelper.models.PhotoIntentConstants;
 import siclo.com.photointenthelper.models.PhotoIntentException;
 import siclo.com.photointenthelper.models.PhotoIntentHelperConfig;
 import siclo.com.photointenthelper.models.PhotoSource;
@@ -40,7 +42,7 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
     private PhotoIntentHelperStorage photoIntentHelperStorage;
     private PhotoGenerator photoGenerator;
     private PhotoIntentHelperConfig photoIntentHelperConfig;
-    private String randomPhotoName;
+    private String storingPhotoName;
 
     PhotoIntentHelperPresenter(PhotoIntentHelperContract.View view, PhotoGenerator photoGenerator, PhotoIntentHelperStorage photoIntentHelperStorage, PhotoIntentHelperConfig photoIntentHelperConfig) {
         this.view = view;
@@ -104,10 +106,10 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
                 public void run() {
                     try {
                         Bitmap pickingPhoto = photoGenerator.generatePhotoWithValue(photoUri, photoIntentHelperConfig.maxExportingSize);
-                        randomPhotoName = UUID.randomUUID().toString();
-                        photoIntentHelperStorage.storeLastetStoredPhotoName(randomPhotoName);
+                        generateStoringPhotoName();
+                        photoIntentHelperStorage.storeLastetStoredPhotoName(storingPhotoName);
                         photoIntentHelperStorage.storeLastetStoredPhotoDir(photoIntentHelperConfig.internalStorageDir);
-                        Bitmap storedBitmap = photoIntentHelperStorage.storePhotoBitmap(photoUri, pickingPhoto, photoIntentHelperConfig.internalStorageDir, randomPhotoName);
+                        Bitmap storedBitmap = photoIntentHelperStorage.storePhotoBitmap(photoUri, pickingPhoto, photoIntentHelperConfig.internalStorageDir, storingPhotoName);
                         if(photoIntentHelperConfig.extraAction !=null){
                             photoIntentHelperConfig.extraAction.doExtraAction(storedBitmap);
                         }
@@ -119,6 +121,15 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
 
                 }
         }).start();
+    }
+
+    private void generateStoringPhotoName() {
+        if(photoIntentHelperConfig.isGenerateUniqueName){
+            String currentTimeStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss'Z'").format(new Date());
+            storingPhotoName = currentTimeStr;
+            return;
+        }
+        storingPhotoName = PhotoIntentConstants.TEMP_STORING_PHOTO_NAME;
     }
 
     @Override
