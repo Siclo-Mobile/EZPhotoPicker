@@ -107,8 +107,10 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
                         randomPhotoName = UUID.randomUUID().toString();
                         photoIntentHelperStorage.storeLastetStoredPhotoName(randomPhotoName);
                         photoIntentHelperStorage.storeLastetStoredPhotoDir(photoIntentHelperConfig.internalStorageDir);
-                        photoIntentHelperStorage.storePhotoBitmap(photoUri, pickingPhoto, photoIntentHelperConfig.internalStorageDir, randomPhotoName);
-
+                        Bitmap storedBitmap = photoIntentHelperStorage.storePhotoBitmap(photoUri, pickingPhoto, photoIntentHelperConfig.internalStorageDir, randomPhotoName);
+                        if(photoIntentHelperConfig.extraAction !=null){
+                            photoIntentHelperConfig.extraAction.doExtraAction(storedBitmap);
+                        }
                         photoPickHandler.sendEmptyMessage(STORE_SUCCESS_MSG);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -167,28 +169,6 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
     private void onPickPhotoWithCamera() {
         isOpenedPhotoPick = true;
         view.openCamera();
-    }
-
-//    private void prepareBeforeCapturing() {
-//        try {
-//            File tempDir = prepareTempDir();
-//            String exportedPhotoPath = tempDir.getAbsolutePath()+"/temp_photo.jpg";
-//            File photoFile = new File(exportedPhotoPath);
-//            exportedPhotoUri = Uri.fromFile(photoFile);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-
-    private File prepareTempDir() throws Exception
-    {
-        File tempDir= Environment.getExternalStorageDirectory();
-        tempDir=new File(tempDir.getAbsolutePath()+"/.temp/");
-        if(!tempDir.exists())
-        {
-            tempDir.mkdirs();
-        }
-        return tempDir;
     }
 
     private void onPickPhotoWithGalery() {

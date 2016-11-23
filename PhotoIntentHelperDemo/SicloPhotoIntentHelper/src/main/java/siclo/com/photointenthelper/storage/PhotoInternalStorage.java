@@ -22,7 +22,7 @@ class PhotoInternalStorage {
         this.context = context;
     }
 
-    public void storePhotoBitmap(Uri photoUri, Bitmap bitmapImage, String internalStorageDir, String fileName) {
+    public Bitmap storePhotoBitmap(Uri photoUri, Bitmap bitmapImage, String internalStorageDir, String fileName) {
         String type = getMimeType(photoUri);
 
         Bitmap.CompressFormat compressFormat = Bitmap.CompressFormat.JPEG;
@@ -36,10 +36,10 @@ class PhotoInternalStorage {
             fos = new FileOutputStream(photoPath);
             // Use the compress method on the BitMap object to write image to the OutputStream
             bitmapImage.compress(compressFormat, 100, fos);
-
             fos.close();
         } catch (Exception e) {
         }
+        return bitmapImage;
     }
 
     private String getMimeType(Uri uri) {

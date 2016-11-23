@@ -29,8 +29,8 @@ public class PhotoIntentHelperStorage {
         return photoIntentHelperStorage;
     }
 
-    public void storePhotoBitmap(Uri photoUri, Bitmap pickingPhoto, String internalStorageDir, String randomPhotoName) {
-        photoInternalStorage.storePhotoBitmap(photoUri, pickingPhoto, internalStorageDir, randomPhotoName);
+    public Bitmap storePhotoBitmap(Uri photoUri, Bitmap pickingPhoto, String internalStorageDir, String randomPhotoName) {
+        return photoInternalStorage.storePhotoBitmap(photoUri, pickingPhoto, internalStorageDir, randomPhotoName);
     }
 
     public void storeLastetStoredPhotoName(String randomPhotoName) {
