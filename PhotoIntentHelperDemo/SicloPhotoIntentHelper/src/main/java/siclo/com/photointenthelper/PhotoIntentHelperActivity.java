@@ -30,6 +30,8 @@ import static siclo.com.photointenthelper.models.PhotoIntentConstants.SCREEN_ORI
 public class PhotoIntentHelperActivity
         extends AppCompatActivity implements PhotoIntentHelperContract.View {
 
+    private static final int REQUEST_CAMERA_PERMISSION = 2001;
+    private static final int REQUEST_READ_EXTERNAL_STORAGE_PERMISSION = 2002;
     private static final int PICK_PHOTO_FROM_GALLERY = 1001;
     private static final int PICK_PHOTO_FROM_CAMERA = 1002;
     PhotoIntentHelperConfig photoIntentHelperConfig;
@@ -61,10 +63,9 @@ public class PhotoIntentHelperActivity
 
     @Override
     public void openGallery() {
-        Intent intent = new Intent();
+        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_PHOTO_FROM_GALLERY);
+        startActivityForResult(intent, PICK_PHOTO_FROM_GALLERY);
     }
 
     @Override
@@ -87,13 +88,14 @@ public class PhotoIntentHelperActivity
     @Override
     public void finishWithNoResult() {
         finish();
+        overridePendingTransition(0, 0);
     }
 
     @Override
     public void requestCameraPermission() {
         ActivityCompat.requestPermissions(PhotoIntentHelperActivity.this,
                 new String[]{Manifest.permission.CAMERA},
-                1);
+                REQUEST_CAMERA_PERMISSION);
     }
 
     @Override
@@ -104,27 +106,38 @@ public class PhotoIntentHelperActivity
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case 1: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    presenter.onRequestCameraPermissionGranted();
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-                } else {
-                    presenter.onRequestCameraPermissionDenied();
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                    Toast.makeText(PhotoIntentHelperActivity.this,
-                            "Permission denied to read your External storage", Toast.LENGTH_SHORT).show();
-                }
-                return;
-            }
+    public void requestReadExternalStoragePermission() {
+        ActivityCompat.requestPermissions(PhotoIntentHelperActivity.this,
+                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                REQUEST_READ_EXTERNAL_STORAGE_PERMISSION);
+    }
 
-            // other 'case' lines to check for other
-            // permissions this app might request
+    @Override
+    public void showToastMessagePermissionDenied() {
+        Toast.makeText(PhotoIntentHelperActivity.this,
+                "Permission denied, cannot complete the action", Toast.LENGTH_SHORT).show();
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        boolean isGrantedPermission = grantResults.length > 0
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED;
+
+        if (!isGrantedPermission) {
+            presenter.onRequestPermissionDenied();
+            return;
+        }
+
+        switch (requestCode) {
+            case REQUEST_CAMERA_PERMISSION: {
+                    presenter.onRequestCameraPermissionGranted();
+                break;
+            }
+            case REQUEST_READ_EXTERNAL_STORAGE_PERMISSION:{
+                presenter.onRequestReadExternalPermissionGranted();
+                break;
+            }
         }
     }
 

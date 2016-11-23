@@ -87,8 +87,7 @@ public class PhotoGenerator {
     }
 
     private Bitmap scalePhotoWithMaxSampleSize(Uri pickedStringURI, int maxSize) throws IOException {
-        InputStream is;
-        is = context.getContentResolver().openInputStream(pickedStringURI);
+        InputStream is = context.getContentResolver().openInputStream(pickedStringURI);
 
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         bmOptions.inJustDecodeBounds = true;

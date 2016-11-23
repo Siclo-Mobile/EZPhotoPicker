@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +32,7 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
      */
     private static boolean isStoringPhoto = false;
     private static boolean isOpenedPhotoPick = false;
+    private static Uri photoUri;
 
     private static final int STORE_SUCCESS_MSG = 0;
     private static final int STORE_FAIL_MSG = 1;
@@ -72,15 +74,29 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
 
     @Override
     public void onPhotoPickedFromGallery(final Intent data) {
-        final Uri photoUri = data.getData();
-        onPhotoPicked(photoUri);
+        photoUri = data.getData();
+        boolean isPhotoUriPointToExternalStorage = isCurrentPhotoUriPointToExternalStorage();
+        if(isPhotoUriPointToExternalStorage){
+            view.requestReadExternalStoragePermission();
+            return;
+        }
+        onPhotoPicked();
     }
 
-    private void onPhotoPicked(final Uri photoUri) {
+    @Override
+    public void onRequestReadExternalPermissionGranted() {
+        onPhotoPicked();
+    }
+
+    private void onPhotoPicked() {
         isOpenedPhotoPick =false;
         isStoringPhoto = true;
         view.showLoading();
         processPickedUriInBackground(photoUri);
+    }
+
+    private boolean isCurrentPhotoUriPointToExternalStorage() {
+        return photoUri.toString().contains(Environment.getExternalStorageDirectory().getAbsolutePath());
     }
 
     private void processPickedUriInBackground(final Uri photoUri) {
@@ -94,6 +110,9 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
                         photoIntentHelperStorage.storePhotoBitmap(photoUri, pickingPhoto, photoIntentHelperConfig.internalStorageDir, randomPhotoName);
 
                         photoPickHandler.sendEmptyMessage(STORE_SUCCESS_MSG);
+                    } catch (SecurityException e){
+                        Log.i("TCV", "SecurityException");
+                        e.printStackTrace();
                     } catch (IOException e) {
                         e.printStackTrace();
                         photoPickHandler.sendEmptyMessage(STORE_FAIL_MSG);
@@ -107,8 +126,8 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
     public void onPhotoPickedFromCamera(File internalDir) {
 //        view.notifyGalleryDataChanged(exportedPhotoUri);
         File photoFile = new File(internalDir, PhotoIntentContentProvider.TEMP_PHOTO_NAME);
-        Uri photoUri = Uri.fromFile(photoFile);
-        onPhotoPicked(photoUri);
+        photoUri = Uri.fromFile(photoFile);
+        onPhotoPicked();
     }
 
     @Override
@@ -117,7 +136,8 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
     }
 
     @Override
-    public void onRequestCameraPermissionDenied() {
+    public void onRequestPermissionDenied() {
+        view.showToastMessagePermissionDenied();
         view.finishWithNoResult();
     }
 

@@ -29,6 +29,9 @@ interface PhotoIntentHelperContract {
 
         void openCamera();
 
+        void requestReadExternalStoragePermission();
+
+        void showToastMessagePermissionDenied();
     }
 
     interface Presenter{
@@ -39,11 +42,13 @@ interface PhotoIntentHelperContract {
 
         void onRequestCameraPermissionGranted();
 
-        void onRequestCameraPermissionDenied();
+        void onRequestPermissionDenied();
 
         void onDestroy();
 
         void onPhotoPickedFromCamera(File filesDir);
+
+        void onRequestReadExternalPermissionGranted();
     }
 
 }
