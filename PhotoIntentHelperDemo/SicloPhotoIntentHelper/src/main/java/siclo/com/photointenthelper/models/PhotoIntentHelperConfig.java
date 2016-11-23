@@ -10,14 +10,30 @@ import java.io.Serializable;
 
 public class PhotoIntentHelperConfig implements Serializable{
 
+    /**
+     * Source: {@link PhotoSource}
+     * CAMERA | GALLERY
+     */
     public PhotoSource photoSource;
     /**
      * internal storage folder
      * for eg: "abc/def"
      */
     public String internalStorageDir;
+
+    /**
+     * generate file name base on the current time
+     * or keep it hard name as
+     * {@link PhotoIntentConstants#TEMP_STORING_PHOTO_NAME}
+     */
     public boolean isGenerateUniqueName = false;
-    public int maxExportingSize;
+
+    /**
+     * exporting photo size to internal storage,
+     * default is 0, mean original size
+     */
+    public int maxExportingSize = 0;
+
     public ExtraAction extraAction;
 
     /**

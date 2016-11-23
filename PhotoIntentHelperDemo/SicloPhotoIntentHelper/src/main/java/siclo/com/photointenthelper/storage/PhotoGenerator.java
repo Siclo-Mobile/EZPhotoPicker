@@ -7,7 +7,6 @@ import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -61,10 +60,7 @@ public class PhotoGenerator {
 
         int photoW = generatingPhotoBitmap.getWidth();
         int photoH = generatingPhotoBitmap.getHeight();
-
-        if (photoW > maxSize || photoH > maxSize) {
-            generatingPhotoBitmap = scalePhotoByMaxSize(maxSize, photoW, photoH, generatingPhotoBitmap);
-        }
+        generatingPhotoBitmap = scalePhotoByMaxSize(maxSize, photoW, photoH, generatingPhotoBitmap);
 
         int rotate = getImageOrientation(pickedStringURI.getPath());
         if (rotate == 0) {
@@ -88,34 +84,32 @@ public class PhotoGenerator {
 
     private Bitmap scalePhotoWithMaxSampleSize(Uri pickedStringURI, int maxSize) throws IOException {
         InputStream is = context.getContentResolver().openInputStream(pickedStringURI);
-
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-        bmOptions.inJustDecodeBounds = true;
-        BitmapFactory.decodeStream(is, null, bmOptions);
-        if (is != null) {
-            is.close();
+        if(maxSize != 0){
+            bmOptions.inJustDecodeBounds = false;
+            BitmapFactory.decodeStream(is, null, bmOptions);
+            int photoW = bmOptions.outWidth;
+            int photoH = bmOptions.outHeight;
+            is = context.getContentResolver().openInputStream(pickedStringURI);
+            bmOptions.inSampleSize = Math.max(photoW / maxSize, photoH / maxSize);
         }
-        int photoW = bmOptions.outWidth;
-        int photoH = bmOptions.outHeight;
         bmOptions.inJustDecodeBounds = false;
-        is = context.getContentResolver().openInputStream(pickedStringURI);
-        //SAVE ORIGINAL PHOTO
-        bmOptions.inSampleSize = Math.max(photoW / maxSize, photoH / maxSize);
         return BitmapFactory.decodeStream(is, null, bmOptions);
     }
 
     private Bitmap scalePhotoByMaxSize(int maxSize, int photoW, int photoH, Bitmap generatingPhotoBitmap) {
+        if(maxSize == 0){
+            return generatingPhotoBitmap;
+        }
+
+        if (photoW < maxSize && photoH < maxSize) {
+            return generatingPhotoBitmap;
+        }
         float scaleSize = Math.max((float)photoW / maxSize, (float)photoH / maxSize);
         generatingPhotoBitmap = Bitmap.createScaledBitmap(generatingPhotoBitmap,
                 (int) (photoW / scaleSize), (int) (photoH / scaleSize),
                 true);
         return generatingPhotoBitmap;
-    }
-
-    public static byte[] convertBitmapToByte(Bitmap bitmap) {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream); //compress to which format you want.
-        return stream.toByteArray();
     }
 
 }
