@@ -1,11 +1,13 @@
 package siclo.com.photointenthelper.storage;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.Log;
+import android.webkit.MimeTypeMap;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,27 +16,50 @@ import java.io.FileOutputStream;
 
 class PhotoInternalStorage {
 
-
-//    public static final String PHOTO_DIR = "Photos";
-
     private final Context context;
 
     public PhotoInternalStorage(Context context) {
         this.context = context;
     }
 
-    public void storePhotoBitmap(Bitmap bitmapImage, String internalStorageDir, String fileName) {
+    public void storePhotoBitmap(Uri photoUri, Bitmap bitmapImage, String internalStorageDir, String fileName) {
+        String type = getMimeType(photoUri);
+
+        Bitmap.CompressFormat compressFormat = Bitmap.CompressFormat.JPEG;
+        if("PNG".equalsIgnoreCase(type)){
+            compressFormat = Bitmap.CompressFormat.PNG;
+        }
+
         File photoPath = getPhotoByName(internalStorageDir, fileName);
         FileOutputStream fos;
         try {
             fos = new FileOutputStream(photoPath);
             // Use the compress method on the BitMap object to write image to the OutputStream
-            bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            bitmapImage.compress(compressFormat, 100, fos);
 
             fos.close();
         } catch (Exception e) {
         }
     }
+
+    private String getMimeType(Uri uri) {
+        String extension;
+
+        //Check uri format to avoid null
+        if (uri.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
+            //If scheme is a content
+            final MimeTypeMap mime = MimeTypeMap.getSingleton();
+            extension = mime.getExtensionFromMimeType(context.getContentResolver().getType(uri));
+        } else {
+            //If scheme is a File
+            //This will replace white spaces with %20 and also other special characters. This will avoid returning null values on file name with spaces and special characters.
+            extension = MimeTypeMap.getFileExtensionFromUrl(Uri.fromFile(new File(uri.getPath())).toString());
+
+        }
+
+        return extension;
+    }
+
 
     public Bitmap loadPhoto(String fileName) throws FileNotFoundException {
         File photoPath = getPhotoByName(null, fileName);

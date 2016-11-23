@@ -91,7 +91,7 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
                         Bitmap pickingPhoto = photoGenerator.generatePhotoWithValue(photoUri, photoIntentHelperConfig.scaleSize);
                         randomPhotoName = UUID.randomUUID().toString();
                         photoIntentHelperStorage.storeLastetStoredPhotoName(randomPhotoName);
-                        photoIntentHelperStorage.storePhotoBitmap(pickingPhoto, photoIntentHelperConfig.internalStorageDir, randomPhotoName);
+                        photoIntentHelperStorage.storePhotoBitmap(photoUri, pickingPhoto, photoIntentHelperConfig.internalStorageDir, randomPhotoName);
 
                         photoPickHandler.sendEmptyMessage(STORE_SUCCESS_MSG);
                     } catch (IOException e) {

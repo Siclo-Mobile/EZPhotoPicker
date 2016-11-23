@@ -56,9 +56,38 @@ public class PhotoGenerator {
     }
 
     public Bitmap generatePhotoWithValue(Uri pickedStringURI, int maxSize) throws IOException {
-        int rotate = getImageOrientation(pickedStringURI.getPath());
 
-        InputStream is = null;
+        Bitmap generatingPhotoBitmap = scalePhotoWithMaxSampleSize(pickedStringURI, maxSize);
+
+        int photoW = generatingPhotoBitmap.getWidth();
+        int photoH = generatingPhotoBitmap.getHeight();
+
+        if (photoW > maxSize || photoH > maxSize) {
+            generatingPhotoBitmap = scalePhotoByMaxSize(maxSize, photoW, photoH, generatingPhotoBitmap);
+        }
+
+        int rotate = getImageOrientation(pickedStringURI.getPath());
+        if (rotate == 0) {
+            return generatingPhotoBitmap;
+        }
+        generatingPhotoBitmap = rotatePhotoByExif(generatingPhotoBitmap, rotate);
+
+        return generatingPhotoBitmap;
+    }
+
+    private Bitmap rotatePhotoByExif(Bitmap generatingPhotoBitmap, int rotate) {
+        /**
+         * rotate before return result
+         */
+        Matrix matrix = new Matrix();
+        matrix.postRotate(rotate);
+        generatingPhotoBitmap = Bitmap.createBitmap(generatingPhotoBitmap, 0, 0, generatingPhotoBitmap.getWidth(),
+                generatingPhotoBitmap.getHeight(), matrix, true);
+        return generatingPhotoBitmap;
+    }
+
+    private Bitmap scalePhotoWithMaxSampleSize(Uri pickedStringURI, int maxSize) throws IOException {
+        InputStream is;
         is = context.getContentResolver().openInputStream(pickedStringURI);
 
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
@@ -73,28 +102,14 @@ public class PhotoGenerator {
         is = context.getContentResolver().openInputStream(pickedStringURI);
         //SAVE ORIGINAL PHOTO
         bmOptions.inSampleSize = Math.max(photoW / maxSize, photoH / maxSize);
-        Bitmap generatingPhotoBitmap = BitmapFactory.decodeStream(is, null, bmOptions);
+        return BitmapFactory.decodeStream(is, null, bmOptions);
+    }
 
-        photoW = generatingPhotoBitmap.getWidth();
-        photoH = generatingPhotoBitmap.getHeight();
-
-        if (photoW > maxSize || photoH > maxSize) {
-            float scaleSize = Math.max((float)photoW / maxSize, (float)photoH / maxSize);
-            generatingPhotoBitmap = Bitmap.createScaledBitmap(generatingPhotoBitmap,
-                    (int) (photoW / scaleSize), (int) (photoH / scaleSize),
-                    true);
-        }
-        if (rotate == 0) {
-            return generatingPhotoBitmap;
-        }
-
-        /**
-         * rotate before return result
-         */
-        Matrix matrix = new Matrix();
-        matrix.postRotate(rotate);
-        generatingPhotoBitmap = Bitmap.createBitmap(generatingPhotoBitmap, 0, 0, generatingPhotoBitmap.getWidth(),
-                generatingPhotoBitmap.getHeight(), matrix, true);
+    private Bitmap scalePhotoByMaxSize(int maxSize, int photoW, int photoH, Bitmap generatingPhotoBitmap) {
+        float scaleSize = Math.max((float)photoW / maxSize, (float)photoH / maxSize);
+        generatingPhotoBitmap = Bitmap.createScaledBitmap(generatingPhotoBitmap,
+                (int) (photoW / scaleSize), (int) (photoH / scaleSize),
+                true);
         return generatingPhotoBitmap;
     }
 
