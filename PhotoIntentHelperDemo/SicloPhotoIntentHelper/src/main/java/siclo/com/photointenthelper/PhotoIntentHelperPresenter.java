@@ -136,7 +136,7 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
 
     @Override
     public void onRequestPermissionDenied() {
-        view.showToastMessagePermissionDenied();
+        view.showToastMessagePermissionDenied(photoIntentHelperConfig.permisionDeniedErrorStringResource);
         view.finishWithNoResult();
     }
 
@@ -157,7 +157,7 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
                     view.finishPickPhotoWithSuccessResult();
                     break;
                 case STORE_FAIL_MSG:
-                    view.showPickPhotoFromGalleryError();
+                    view.showPickPhotoFromGalleryError(photoIntentHelperConfig.permisionUnexpectedErrorStringResource);
                     view.finishWithNoResult();
                     break;
             }

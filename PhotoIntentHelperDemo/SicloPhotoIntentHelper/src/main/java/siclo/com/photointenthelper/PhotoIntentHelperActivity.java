@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
@@ -85,8 +84,13 @@ public class PhotoIntentHelperActivity
     }
 
     @Override
-    public void showPickPhotoFromGalleryError() {
-        new AlertDialog.Builder(this).setMessage("Unexpected error, please try again");
+    public void showPickPhotoFromGalleryError(int permisionUnexpectedErrorStringResource) {
+        String message = "Unexpected error, please try again";
+        if(permisionUnexpectedErrorStringResource != 0){
+            message = getString(permisionUnexpectedErrorStringResource);
+        }
+        Toast.makeText(PhotoIntentHelperActivity.this, message
+                , Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -116,10 +120,13 @@ public class PhotoIntentHelperActivity
     }
 
     @Override
-    public void showToastMessagePermissionDenied() {
-        Toast.makeText(PhotoIntentHelperActivity.this,
-                "Permission denied, cannot complete the action", Toast.LENGTH_SHORT).show();
-
+    public void showToastMessagePermissionDenied(int permisionDeniedErrorStringResource) {
+        String message = "Permission denied, cannot complete the action";
+        if(permisionDeniedErrorStringResource != 0){
+            message = getString(permisionDeniedErrorStringResource);
+        }
+        Toast.makeText(PhotoIntentHelperActivity.this, message
+                , Toast.LENGTH_SHORT).show();
     }
 
     @Override

@@ -21,7 +21,7 @@ interface PhotoIntentHelperContract {
 
         void finishPickPhotoWithSuccessResult();
 
-        void showPickPhotoFromGalleryError();
+        void showPickPhotoFromGalleryError(int permisionUnexpectedErrorStringResource);
 
         void finishWithNoResult();
 
@@ -31,7 +31,7 @@ interface PhotoIntentHelperContract {
 
         void requestReadExternalStoragePermission();
 
-        void showToastMessagePermissionDenied();
+        void showToastMessagePermissionDenied(int permisionDeniedErrorStringResource);
     }
 
     interface Presenter{

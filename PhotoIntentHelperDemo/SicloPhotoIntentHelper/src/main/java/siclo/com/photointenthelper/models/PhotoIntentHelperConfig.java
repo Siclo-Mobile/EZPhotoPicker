@@ -19,6 +19,14 @@ public class PhotoIntentHelperConfig implements Serializable{
     public int scaleSize;
     public ExtraAction extraAction;
 
+    /**
+     * Error message resource id
+     * default is hard string by english
+     * use it when u want to support multiple language
+     */
+    public int permisionDeniedErrorStringResource;
+    public int permisionUnexpectedErrorStringResource;
+
 
     public interface ExtraAction{
         /**
