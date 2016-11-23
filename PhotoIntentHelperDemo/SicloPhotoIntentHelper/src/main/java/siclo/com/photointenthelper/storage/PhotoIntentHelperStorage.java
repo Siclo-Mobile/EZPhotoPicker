@@ -35,29 +35,29 @@ public class PhotoIntentHelperStorage {
         return photoInternalStorage.storePhotoBitmap(photoUri, pickingPhoto, internalStorageDir, randomPhotoName);
     }
 
-    public void storeLastetStoredPhotoName(String randomPhotoName) {
-        pathStorage.storeLastestStoredPhotoName(randomPhotoName);
+    public void storeLatestStoredPhotoName(String randomPhotoName) {
+        pathStorage.storeLatestStoredPhotoName(randomPhotoName);
     }
 
-    public String loadLastestStoredPhotoName() {
+    public String loadLatestStoredPhotoName() {
         return pathStorage.loadLastetStoredPhotoName();
     }
 
-    public void storeLastetStoredPhotoDir(String photoDir) {
+    public void storeLatestStoredPhotoDir(String photoDir) {
         pathStorage.storeLastetStoredPhotoDir(photoDir);
     }
 
-    public String loadLastetStoredPhotoDir() {
+    public String loadLatestStoredPhotoDir() {
         return pathStorage.loadLastetStoredPhotoDir();
     }
 
-    public Bitmap loadLastestStoredPhotoBitmap() throws IOException {
-        return loadLastestStoredPhotoBitmap(0);
+    public Bitmap loadLatestStoredPhotoBitmap() throws IOException {
+        return loadLatestStoredPhotoBitmap(0);
     }
 
-    public Bitmap loadLastestStoredPhotoBitmap(int maxScaleSize) throws IOException {
-        String storedPhotoDir = loadLastetStoredPhotoDir();
-        String storedPhotoName = loadLastestStoredPhotoName();
+    public Bitmap loadLatestStoredPhotoBitmap(int maxScaleSize) throws IOException {
+        String storedPhotoDir = loadLatestStoredPhotoDir();
+        String storedPhotoName = loadLatestStoredPhotoName();
         return loadStoredPhotoBitmap(storedPhotoDir, storedPhotoName, maxScaleSize);
     }
     public Bitmap loadStoredPhotoBitmap(String storedPhotoDir, String storedPhotoName) throws IOException {

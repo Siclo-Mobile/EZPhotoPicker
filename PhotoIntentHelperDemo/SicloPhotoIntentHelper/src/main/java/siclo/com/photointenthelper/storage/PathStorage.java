@@ -26,7 +26,7 @@ class PathStorage {
                 .getSharedPreferences(prefKey, Context.MODE_PRIVATE);
     }
 
-    public void storeLastestStoredPhotoName(String photoName){
+    public void storeLatestStoredPhotoName(String photoName){
         storeString(PHOTO_NAME_KEY, photoName);
     }
 

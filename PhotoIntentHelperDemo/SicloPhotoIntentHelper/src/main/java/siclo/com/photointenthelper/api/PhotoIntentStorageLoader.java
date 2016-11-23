@@ -19,21 +19,21 @@ public class PhotoIntentStorageLoader {
         photoIntentHelperStorage = PhotoIntentHelperStorage.getInstance(context);
     }
 
-    public String loadLastestStoredPhotoName() {
-        return photoIntentHelperStorage.loadLastestStoredPhotoName();
+    public String loadLatestStoredPhotoName() {
+        return photoIntentHelperStorage.loadLatestStoredPhotoName();
     }
 
-    public String loadLastetStoredPhotoDir() {
-        return photoIntentHelperStorage.loadLastetStoredPhotoDir();
+    public String loadLatestStoredPhotoDir() {
+        return photoIntentHelperStorage.loadLatestStoredPhotoDir();
     }
 
-    public Bitmap loadLastestStoredPhotoBitmap() throws IOException {
-        return loadLastestStoredPhotoBitmap(0);
+    public Bitmap loadLatestStoredPhotoBitmap() throws IOException {
+        return loadLatestStoredPhotoBitmap(0);
     }
 
-    public Bitmap loadLastestStoredPhotoBitmap(int maxScaleSize) throws IOException {
-        String storedPhotoDir = loadLastetStoredPhotoDir();
-        String storedPhotoName = loadLastestStoredPhotoName();
+    public Bitmap loadLatestStoredPhotoBitmap(int maxScaleSize) throws IOException {
+        String storedPhotoDir = loadLatestStoredPhotoDir();
+        String storedPhotoName = loadLatestStoredPhotoName();
         return loadStoredPhotoBitmap(storedPhotoDir, storedPhotoName, maxScaleSize);
     }
     public Bitmap loadStoredPhotoBitmap(String storedPhotoDir, String storedPhotoName) throws IOException {

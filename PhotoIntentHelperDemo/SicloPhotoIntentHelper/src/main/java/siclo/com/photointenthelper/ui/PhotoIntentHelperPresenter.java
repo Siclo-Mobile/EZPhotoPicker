@@ -107,8 +107,8 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
                     try {
                         Bitmap pickingPhoto = photoGenerator.generatePhotoWithValue(photoUri, photoIntentHelperConfig.maxExportingSize);
                         generateStoringPhotoName();
-                        photoIntentHelperStorage.storeLastetStoredPhotoName(storingPhotoName);
-                        photoIntentHelperStorage.storeLastetStoredPhotoDir(photoIntentHelperConfig.internalStorageDir);
+                        photoIntentHelperStorage.storeLatestStoredPhotoName(storingPhotoName);
+                        photoIntentHelperStorage.storeLatestStoredPhotoDir(photoIntentHelperConfig.internalStorageDir);
                         Bitmap storedBitmap = photoIntentHelperStorage.storePhotoBitmap(photoUri, pickingPhoto, photoIntentHelperConfig.internalStorageDir, storingPhotoName);
                         if(photoIntentHelperConfig.extraAction !=null){
                             photoIntentHelperConfig.extraAction.doExtraAction(storedBitmap);

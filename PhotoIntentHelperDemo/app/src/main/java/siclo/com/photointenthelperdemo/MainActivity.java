@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
         if(requestCode == PhotoIntentHelper.PHOTO_PICK_REQUEST_CODE){
             try {
-                Bitmap pickedPhoto = new PhotoIntentStorageLoader(this).loadLastestStoredPhotoBitmap();
+                Bitmap pickedPhoto = new PhotoIntentStorageLoader(this).loadLatestStoredPhotoBitmap();
                 ivPickedPhoto.setImageBitmap(pickedPhoto);
             } catch (IOException e) {
                 e.printStackTrace();
