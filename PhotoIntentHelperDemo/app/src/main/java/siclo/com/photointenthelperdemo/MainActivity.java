@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 PhotoIntentHelperConfig config = new PhotoIntentHelperConfig();
                 config.photoSource = PhotoSource.GALERY;
-                config.scaleSize = 1000;
+                config.maxExportingSize = 1000;
                 PhotoIntentHelper.startPhotoIntentHelperActivity(MainActivity.this, config);
             }
         });
@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 PhotoIntentHelperConfig config = new PhotoIntentHelperConfig();
                 config.photoSource = PhotoSource.CAMERA;
-                config.scaleSize = 1000;
+                config.maxExportingSize = 1000;
                 PhotoIntentHelper.startPhotoIntentHelperActivity(MainActivity.this, config);
             }
         });

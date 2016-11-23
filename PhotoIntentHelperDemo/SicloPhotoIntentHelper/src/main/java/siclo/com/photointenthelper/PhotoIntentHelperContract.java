@@ -21,7 +21,7 @@ interface PhotoIntentHelperContract {
 
         void finishPickPhotoWithSuccessResult();
 
-        void showPickPhotoFromGalleryError(int permisionUnexpectedErrorStringResource);
+        void showPickPhotoFromGalleryError(int unexpectedErrorStringResource);
 
         void finishWithNoResult();
 

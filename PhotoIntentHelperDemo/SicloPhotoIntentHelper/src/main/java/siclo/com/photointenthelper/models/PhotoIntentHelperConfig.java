@@ -16,7 +16,7 @@ public class PhotoIntentHelperConfig implements Serializable{
      * for eg: "abc/def"
      */
     public String internalStorageDir;
-    public int scaleSize;
+    public int maxExportingSize;
     public ExtraAction extraAction;
 
     /**
@@ -25,7 +25,7 @@ public class PhotoIntentHelperConfig implements Serializable{
      * use it when u want to support multiple language
      */
     public int permisionDeniedErrorStringResource;
-    public int permisionUnexpectedErrorStringResource;
+    public int unexpectedErrorStringResource;
 
 
     public interface ExtraAction{

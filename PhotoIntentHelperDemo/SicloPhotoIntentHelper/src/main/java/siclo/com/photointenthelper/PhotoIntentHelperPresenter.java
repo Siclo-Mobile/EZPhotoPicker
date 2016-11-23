@@ -103,7 +103,7 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
                 @Override
                 public void run() {
                     try {
-                        Bitmap pickingPhoto = photoGenerator.generatePhotoWithValue(photoUri, photoIntentHelperConfig.scaleSize);
+                        Bitmap pickingPhoto = photoGenerator.generatePhotoWithValue(photoUri, photoIntentHelperConfig.maxExportingSize);
                         randomPhotoName = UUID.randomUUID().toString();
                         photoIntentHelperStorage.storeLastetStoredPhotoName(randomPhotoName);
                         photoIntentHelperStorage.storeLastetStoredPhotoDir(photoIntentHelperConfig.internalStorageDir);
@@ -157,7 +157,7 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
                     view.finishPickPhotoWithSuccessResult();
                     break;
                 case STORE_FAIL_MSG:
-                    view.showPickPhotoFromGalleryError(photoIntentHelperConfig.permisionUnexpectedErrorStringResource);
+                    view.showPickPhotoFromGalleryError(photoIntentHelperConfig.unexpectedErrorStringResource);
                     view.finishWithNoResult();
                     break;
             }

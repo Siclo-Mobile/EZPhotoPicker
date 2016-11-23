@@ -84,10 +84,10 @@ public class PhotoIntentHelperActivity
     }
 
     @Override
-    public void showPickPhotoFromGalleryError(int permisionUnexpectedErrorStringResource) {
+    public void showPickPhotoFromGalleryError(int unexpectedErrorStringResource) {
         String message = "Unexpected error, please try again";
-        if(permisionUnexpectedErrorStringResource != 0){
-            message = getString(permisionUnexpectedErrorStringResource);
+        if(unexpectedErrorStringResource != 0){
+            message = getString(unexpectedErrorStringResource);
         }
         Toast.makeText(PhotoIntentHelperActivity.this, message
                 , Toast.LENGTH_SHORT).show();
