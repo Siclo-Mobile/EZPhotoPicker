@@ -76,6 +76,10 @@ public class PhotoIntentHelperActivity
     @Override
     public void finishPickPhotoWithSuccessResult() {
         setResult(RESULT_OK);
+        finishedWithoutAnimation();
+    }
+
+    private void finishedWithoutAnimation() {
         finish();
         overridePendingTransition(0, 0);
     }
@@ -87,8 +91,7 @@ public class PhotoIntentHelperActivity
 
     @Override
     public void finishWithNoResult() {
-        finish();
-        overridePendingTransition(0, 0);
+        finishedWithoutAnimation();
     }
 
     @Override
@@ -145,7 +148,7 @@ public class PhotoIntentHelperActivity
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_CANCELED) {
-            finish();
+            finishedWithoutAnimation();
             return;
         }
 

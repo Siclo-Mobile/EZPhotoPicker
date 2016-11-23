@@ -53,6 +53,10 @@ public class PhotoIntentHelperStorage {
     public Bitmap loadLastestStoredPhotoBitmap() {
         String storedPhotoDir = loadLastetStoredPhotoDir();
         String storedPhotoName = loadLastestStoredPhotoName();
+        return loadStoredPhotoBitmap(storedPhotoDir, storedPhotoName);
+    }
+
+    public Bitmap loadStoredPhotoBitmap(String storedPhotoDir, String storedPhotoName) {
         return photoInternalStorage.loadStoredPhotoBitmap(storedPhotoDir, storedPhotoName);
     }
 }

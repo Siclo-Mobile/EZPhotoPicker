@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
@@ -107,12 +106,10 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
                         Bitmap pickingPhoto = photoGenerator.generatePhotoWithValue(photoUri, photoIntentHelperConfig.scaleSize);
                         randomPhotoName = UUID.randomUUID().toString();
                         photoIntentHelperStorage.storeLastetStoredPhotoName(randomPhotoName);
+                        photoIntentHelperStorage.storeLastetStoredPhotoDir(photoIntentHelperConfig.internalStorageDir);
                         photoIntentHelperStorage.storePhotoBitmap(photoUri, pickingPhoto, photoIntentHelperConfig.internalStorageDir, randomPhotoName);
 
                         photoPickHandler.sendEmptyMessage(STORE_SUCCESS_MSG);
-                    } catch (SecurityException e){
-                        Log.i("TCV", "SecurityException");
-                        e.printStackTrace();
                     } catch (IOException e) {
                         e.printStackTrace();
                         photoPickHandler.sendEmptyMessage(STORE_FAIL_MSG);
