@@ -1,4 +1,4 @@
-package siclo.com.ezphotopicker;
+package siclo.com.ezphotopicker.demo;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -9,6 +9,7 @@ import android.widget.ImageView;
 
 import java.io.IOException;
 
+import siclo.com.ezphotopicker.R;
 import siclo.com.ezphotopicker.api.EZPhotoPick;
 import siclo.com.ezphotopicker.api.EZPhotoPickStorage;
 import siclo.com.ezphotopicker.api.models.EZPhotoPickConfig;

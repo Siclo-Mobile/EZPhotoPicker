@@ -20,6 +20,6 @@
 #    public <methods>;
 #}
 -keepattributes Exceptions
--keep public class siclo.com.ezphotopicker.api.** {
+-keep class siclo.com.ezphotopicker.api.** {
   public  *;
 }
