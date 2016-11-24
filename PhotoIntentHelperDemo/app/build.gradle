@@ -4,7 +4,7 @@ android {
     compileSdkVersion 24
     buildToolsVersion "25.0.0"
     defaultConfig {
-        applicationId "siclo.com.siclophotopickdemo"
+        applicationId "siclo.com.siclophotointenthelper.demo"
         minSdkVersion 14
         targetSdkVersion 24
         versionCode 1
