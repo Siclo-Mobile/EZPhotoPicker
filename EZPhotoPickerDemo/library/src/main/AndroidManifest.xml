@@ -1,0 +1,23 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="siclo.com.photointenthelper">
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <application android:allowBackup="true" android:label="@string/app_name"
+        android:supportsRtl="true">
+        <activity android:name="siclo.com.ezphotopicker.ui.PhotoIntentHelperActivity"
+            android:theme="@style/Theme.Transparent">
+        </activity>
+
+        <provider
+
+            android:name="siclo.com.ezphotopicker.storage.PhotoIntentContentProvider"
+
+            android:authorities="siclo.com.photointenthelper"
+
+            android:enabled="true"
+
+            android:exported="true" />
+
+    </application>
+
+</manifest>
