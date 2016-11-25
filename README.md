@@ -1,8 +1,11 @@
 #EZPhotoPicker
 
-A simple library to select images from the gallery and camera. It will help you for storing picked photo in background(with handle scaling big photo), loading picked photo and reuseable everytime you need it.
+A simple library to pick photo from the gallery and camera.
+It also handle all the storing, scaling, rotating, threading, loading for you.
+Easy to start a photo intent, easy to get the result, you won't need to code a lot as what you use to do.
+Let's try it, you will see what I mean.
 
-###Intergrating gradle
+##Intergrating gradle
 
 Add this to your module's build.gradle
 ```javascript
@@ -18,7 +21,7 @@ repositories {
 compile 'com.siclo.ezphotopick:library:1.0.1'
 ```
 
-###Usage
+##Usage
 For full example, please refer to sample
 
 ####Start image picker activity
@@ -52,7 +55,26 @@ EZPhotoPick.startPhotoPickActivity(MainActivity.this, config);
     }
 ```
 *For more public api for the storage, check EZPhotoPickStorage class*
-####License
+
+##Contribution
+
+####Questions
+If you have any questions regarding EZPhotoPicker,create an Issue
+
+####Feature request, new features?
+We are still working on it to add more useful option/feature,
+to create a new feature request, open an issue
+
+I'll try to answer as soon as I find the time.
+
+####Pull requests welcome
+
+Feel free to contribute to EZPhotoPicker.
+
+Either you found a bug or have created a new and awesome feature, just create a pull request.
+
+
+##License
 Copyright 2016 Siclo Mobile Vietnam
 ```
 Licensed under the Apache License, Version 2.0 (the "License");
