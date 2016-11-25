@@ -12,7 +12,7 @@
 
             android:name="siclo.com.ezphotopicker.storage.PhotoIntentContentProvider"
 
-            android:authorities="siclo.com.photointenthelper"
+            android:authorities="${applicationId}.ezphotopicker.provider"
 
             android:enabled="true"
 

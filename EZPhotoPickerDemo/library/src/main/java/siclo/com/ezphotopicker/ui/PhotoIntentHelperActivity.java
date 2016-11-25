@@ -107,7 +107,7 @@ public class PhotoIntentHelperActivity
     @Override
     public void openCamera() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, PhotoIntentContentProvider.CONTENT_URI);
+        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, PhotoIntentContentProvider.getContentUri(this));
         startActivityForResult(takePictureIntent, PICK_PHOTO_FROM_CAMERA);
     }
 

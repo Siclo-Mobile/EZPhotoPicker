@@ -2,10 +2,12 @@ package siclo.com.ezphotopicker.storage;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,11 +17,10 @@ import java.util.HashMap;
  * Created by ericta on 11/22/16.
  */
 
-public class PhotoIntentContentProvider  extends ContentProvider {
+public class PhotoIntentContentProvider extends ContentProvider {
 
     public static final String TEMP_PHOTO_NAME = "temp_photo.jpg";
-    public static final Uri CONTENT_URI = Uri.parse
-            ("content://siclo.com.photointenthelper/");
+    private static Uri CONTENT_URI;
     private static final HashMap<String, String> MIME_TYPES =
             new HashMap<>();
 
@@ -28,15 +29,25 @@ public class PhotoIntentContentProvider  extends ContentProvider {
         MIME_TYPES.put(".jpeg", "image/jpeg");
     }
 
+    public static Uri getContentUri(Context context) {
+        if (CONTENT_URI == null) {
+            String packageId = context.getPackageName();
+            CONTENT_URI = Uri.parse
+                    ("content://" + packageId + ".ezphotopicker.provider/");
+        }
+        return CONTENT_URI;
+    }
+
     @Override
     public boolean onCreate() {
 
         try {
             File mFile = new File(getContext().getFilesDir(), TEMP_PHOTO_NAME);
-            if(!mFile.exists()) {
+            if (!mFile.exists()) {
                 mFile.createNewFile();
             }
-            getContext().getContentResolver().notifyChange(CONTENT_URI, null);
+            Log.i("TCV", "CONTENT_URI " + getContentUri(getContext()));
+            getContext().getContentResolver().notifyChange(getContentUri(getContext()), null);
             return (true);
         } catch (Exception e) {
             e.printStackTrace();
