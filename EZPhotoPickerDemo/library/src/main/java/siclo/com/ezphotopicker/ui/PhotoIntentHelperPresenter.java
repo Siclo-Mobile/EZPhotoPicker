@@ -41,19 +41,19 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
     private PhotoIntentHelperContract.View view;
     private PhotoIntentHelperStorage photoIntentHelperStorage;
     private PhotoGenerator photoGenerator;
-    private EZPhotoPickConfig EZPhotoPickConfig;
+    private EZPhotoPickConfig eZPhotoPickConfig;
     private String storingPhotoName;
 
-    PhotoIntentHelperPresenter(PhotoIntentHelperContract.View view, PhotoGenerator photoGenerator, PhotoIntentHelperStorage photoIntentHelperStorage, EZPhotoPickConfig EZPhotoPickConfig) {
+    PhotoIntentHelperPresenter(PhotoIntentHelperContract.View view, PhotoGenerator photoGenerator, PhotoIntentHelperStorage photoIntentHelperStorage, EZPhotoPickConfig eZPhotoPickConfig) {
         this.view = view;
         this.photoGenerator = photoGenerator;
         this.photoIntentHelperStorage = photoIntentHelperStorage;
-        this.EZPhotoPickConfig = EZPhotoPickConfig;
+        this.eZPhotoPickConfig = eZPhotoPickConfig;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) throws PhotoIntentException {
-        if (EZPhotoPickConfig == null) {
+        if (eZPhotoPickConfig == null) {
             throw PhotoIntentException.getNullPhotoPickConfigException();
         }
 
@@ -66,7 +66,7 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
             return;
         }
 
-        if(EZPhotoPickConfig.photoSource == PhotoSource.CAMERA){
+        if(eZPhotoPickConfig.photoSource == PhotoSource.CAMERA){
             view.requestCameraPermission();
         }else{
             onPickPhotoWithGalery();
@@ -105,13 +105,13 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
                 @Override
                 public void run() {
                     try {
-                        Bitmap pickingPhoto = photoGenerator.generatePhotoWithValue(photoUri, EZPhotoPickConfig.maxExportingSize);
+                        Bitmap pickingPhoto = photoGenerator.generatePhotoWithValue(photoUri, eZPhotoPickConfig.maxExportingSize, eZPhotoPickConfig.needToRotateByExif);
                         generateStoringPhotoName();
                         photoIntentHelperStorage.storeLatestStoredPhotoName(storingPhotoName);
-                        photoIntentHelperStorage.storeLatestStoredPhotoDir(EZPhotoPickConfig.internalStorageDir);
-                        Bitmap storedBitmap = photoIntentHelperStorage.storePhotoBitmap(photoUri, pickingPhoto, EZPhotoPickConfig.internalStorageDir, storingPhotoName);
-                        if(EZPhotoPickConfig.extraAction !=null){
-                            EZPhotoPickConfig.extraAction.doExtraAction(storedBitmap);
+                        photoIntentHelperStorage.storeLatestStoredPhotoDir(eZPhotoPickConfig.internalStorageDir);
+                        Bitmap storedBitmap = photoIntentHelperStorage.storePhotoBitmap(photoUri, pickingPhoto, eZPhotoPickConfig.internalStorageDir, storingPhotoName);
+                        if(eZPhotoPickConfig.extraAction !=null){
+                            eZPhotoPickConfig.extraAction.doExtraAction(storedBitmap);
                         }
                         photoPickHandler.sendEmptyMessage(STORE_SUCCESS_MSG);
                     } catch (IOException e) {
@@ -124,7 +124,7 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
     }
 
     private void generateStoringPhotoName() {
-        if(EZPhotoPickConfig.isGenerateUniqueName){
+        if(eZPhotoPickConfig.isGenerateUniqueName){
             String currentTimeStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss'Z'").format(new Date());
             storingPhotoName = currentTimeStr;
             return;
@@ -147,7 +147,7 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
 
     @Override
     public void onRequestPermissionDenied() {
-        view.showToastMessagePermissionDenied(EZPhotoPickConfig.permisionDeniedErrorStringResource);
+        view.showToastMessagePermissionDenied(eZPhotoPickConfig.permisionDeniedErrorStringResource);
         view.finishWithNoResult();
     }
 
@@ -168,7 +168,7 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
                     view.finishPickPhotoWithSuccessResult();
                     break;
                 case STORE_FAIL_MSG:
-                    view.showPickPhotoFromGalleryError(EZPhotoPickConfig.unexpectedErrorStringResource);
+                    view.showPickPhotoFromGalleryError(eZPhotoPickConfig.unexpectedErrorStringResource);
                     view.finishWithNoResult();
                     break;
             }

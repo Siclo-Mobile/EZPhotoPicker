@@ -24,6 +24,13 @@ public class EZPhotoPickConfig implements Serializable{
     public String internalStorageDir;
 
     /**
+     * rotate the photo to right direction by exif value
+     * it happen many times in Samsung phone
+     * default True
+     */
+    public boolean needToRotateByExif = true;
+
+    /**
      * generate file name base on the current time
      * or keep it hard name as
      * {@link PhotoIntentConstants#TEMP_STORING_PHOTO_NAME}
@@ -37,7 +44,6 @@ public class EZPhotoPickConfig implements Serializable{
     public int maxExportingSize = 0;
 
     public ExtraAction extraAction;
-
     /**
      * Error message resource id
      * default is hard string by english

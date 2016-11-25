@@ -92,14 +92,19 @@ public class PhotoGenerator {
     }
 
 
-    public Bitmap generatePhotoWithValue(Uri pickedStringURI, int maxSize) throws IOException {
+    public Bitmap generatePhotoWithValue(Uri pickedStringURI, int maxSize, boolean needToRotateByExif) throws IOException {
         Bitmap generatingPhotoBitmap = generatePhotoByUriWithMaxSize(pickedStringURI, maxSize);
         generatingPhotoBitmap = scalePhotoByMaxSize(maxSize, generatingPhotoBitmap);
-        generatingPhotoBitmap = rotatePhotoIfNeed(generatingPhotoBitmap, pickedStringURI);
+        generatingPhotoBitmap = rotatePhotoIfNeed(generatingPhotoBitmap, pickedStringURI, needToRotateByExif);
         return generatingPhotoBitmap;
     }
 
-    private Bitmap rotatePhotoIfNeed(Bitmap generatingPhotoBitmap, Uri pickedStringURI) {
+    private Bitmap rotatePhotoIfNeed(Bitmap generatingPhotoBitmap, Uri pickedStringURI, boolean needToRotateByExif) {
+
+        if(!needToRotateByExif){
+            return generatingPhotoBitmap;
+        }
+
         int rotate = getImageOrientation(pickedStringURI.getPath());
         if (rotate == 0) {
             return generatingPhotoBitmap;
