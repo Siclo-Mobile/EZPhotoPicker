@@ -1,8 +1,6 @@
 #EZPhotoPicker
+If you want to pick up a photo from  the gallery and camera, store it somewhere then do something, this library will be the best choice for you. It will handle all the storing, scaling, rotating, threading, loading dialog. Easy to start a photo intent, easy to get the result, you won't need to code a lot as what you use to do.
 
-A simple library to pick photo from the gallery and camera.
-It also handle all the storing, scaling, rotating, threading, loading for you.
-Easy to start a photo intent, easy to get the result, you won't need to code a lot as what you use to do.
 Let's try it, you will see what I mean.
 
 ##Intergrating gradle
