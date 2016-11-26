@@ -20,14 +20,7 @@ class PhotoInternalStorage {
         this.context = context;
     }
 
-    public Bitmap storePhotoBitmap(Uri photoUri, Bitmap bitmapImage, String internalStorageDir, String fileName) {
-        String type = getMimeType(photoUri);
-
-        Bitmap.CompressFormat compressFormat = Bitmap.CompressFormat.JPEG;
-        if ("PNG".equalsIgnoreCase(type)) {
-            compressFormat = Bitmap.CompressFormat.PNG;
-        }
-
+    public Bitmap storePhotoBitmap(Bitmap bitmapImage, Bitmap.CompressFormat compressFormat ,String internalStorageDir, String fileName) {
         File photoPath = getPhotoByName(internalStorageDir, fileName);
         FileOutputStream fos;
         try {
@@ -40,23 +33,7 @@ class PhotoInternalStorage {
         return bitmapImage;
     }
 
-    private String getMimeType(Uri uri) {
-        String extension;
 
-        //Check uri format to avoid null
-        if (uri.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
-            //If scheme is a content
-            final MimeTypeMap mime = MimeTypeMap.getSingleton();
-            extension = mime.getExtensionFromMimeType(context.getContentResolver().getType(uri));
-        } else {
-            //If scheme is a File
-            //This will replace white spaces with %20 and also other special characters. This will avoid returning null values on file name with spaces and special characters.
-            extension = MimeTypeMap.getFileExtensionFromUrl(Uri.fromFile(new File(uri.getPath())).toString());
-
-        }
-
-        return extension;
-    }
 
     public Bitmap loadPhoto(String internalStorageDir, String fileName, int maxScaleSize) throws IOException {
         File photoPath = getPhotoByName(internalStorageDir, fileName);

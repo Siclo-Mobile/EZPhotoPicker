@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 
 import java.io.IOException;
 
+import siclo.com.ezphotopicker.models.PhotoIntentConstants;
 import siclo.com.ezphotopicker.storage.PhotoIntentHelperStorage;
 
 /**
@@ -30,6 +31,11 @@ public class EZPhotoPickStorage {
     public Bitmap loadLatestStoredPhotoBitmap() throws IOException {
         return loadLatestStoredPhotoBitmap(0);
     }
+    public Bitmap loadLatestStoredPhotoBitmapThumbnail() throws IOException {
+        String storedPhotoDir = loadLatestStoredPhotoDir();
+        String storedPhotoName = loadLatestStoredPhotoName() + PhotoIntentConstants.THUMB_NAME_SUFFIX;
+        return loadStoredPhotoBitmap(storedPhotoDir, storedPhotoName, 0);
+    }
 
     public Bitmap loadLatestStoredPhotoBitmap(int maxScaleSize) throws IOException {
         String storedPhotoDir = loadLatestStoredPhotoDir();
@@ -38,6 +44,11 @@ public class EZPhotoPickStorage {
     }
     public Bitmap loadStoredPhotoBitmap(String storedPhotoDir, String storedPhotoName) throws IOException {
         return loadStoredPhotoBitmap(storedPhotoDir, storedPhotoName, 0);
+    }
+
+    public Bitmap loadStoredPhotoBitmapThumbnail(String storedPhotoDir, String storedPhotoName) throws IOException {
+        String storedPhotoThumbnailName = storedPhotoName + PhotoIntentConstants.THUMB_NAME_SUFFIX;
+        return loadStoredPhotoBitmap(storedPhotoDir, storedPhotoThumbnailName, 0);
     }
 
     public Bitmap loadStoredPhotoBitmap(String storedPhotoDir, String storedPhotoName, int maxScaleSize) throws IOException {

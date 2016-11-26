@@ -13,6 +13,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
+import siclo.com.ezphotopicker.api.models.EZPhotoPickConfig;
+
 /**
  * Created by ericta on 12/16/15.
  */
@@ -92,10 +94,10 @@ public class PhotoGenerator {
     }
 
 
-    public Bitmap generatePhotoWithValue(Uri pickedStringURI, int maxSize, boolean needToRotateByExif) throws IOException {
-        Bitmap generatingPhotoBitmap = generatePhotoByUriWithMaxSize(pickedStringURI, maxSize);
-        generatingPhotoBitmap = scalePhotoByMaxSize(maxSize, generatingPhotoBitmap);
-        generatingPhotoBitmap = rotatePhotoIfNeed(generatingPhotoBitmap, pickedStringURI, needToRotateByExif);
+    public Bitmap generatePhotoWithValue(Uri pickedStringURI, EZPhotoPickConfig eZPhotoPickConfig) throws IOException {
+        Bitmap generatingPhotoBitmap = generatePhotoByUriWithMaxSize(pickedStringURI, eZPhotoPickConfig.exportingSize);
+        generatingPhotoBitmap = scalePhotoByMaxSize(eZPhotoPickConfig.exportingSize, generatingPhotoBitmap);
+        generatingPhotoBitmap = rotatePhotoIfNeed(generatingPhotoBitmap, pickedStringURI, eZPhotoPickConfig.needToRotateByExif);
         return generatingPhotoBitmap;
     }
 
@@ -119,7 +121,7 @@ public class PhotoGenerator {
         return generatingPhotoBitmap;
     }
 
-    private Bitmap scalePhotoByMaxSize(int maxSize, Bitmap generatingPhotoBitmap) {
+    public Bitmap scalePhotoByMaxSize(int maxSize, Bitmap generatingPhotoBitmap) {
 
         if (maxSize <= 0) {
             return generatingPhotoBitmap;

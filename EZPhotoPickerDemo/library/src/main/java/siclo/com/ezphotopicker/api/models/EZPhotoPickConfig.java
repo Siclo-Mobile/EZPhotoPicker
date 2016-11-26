@@ -10,7 +10,7 @@ import siclo.com.ezphotopicker.models.PhotoIntentConstants;
  * Created by ericta on 11/13/16.
  */
 
-public class EZPhotoPickConfig implements Serializable{
+public class EZPhotoPickConfig implements Serializable {
 
     /**
      * Source: {@link PhotoSource}
@@ -18,10 +18,10 @@ public class EZPhotoPickConfig implements Serializable{
      */
     public PhotoSource photoSource;
     /**
-     * internal storage folder
+     * storage folder
      * for eg: "abc/def"
      */
-    public String internalStorageDir;
+    public String storageDir;
 
     /**
      * rotate the photo to right direction by exif value
@@ -29,6 +29,19 @@ public class EZPhotoPickConfig implements Serializable{
      * default True
      */
     public boolean needToRotateByExif = true;
+
+    /**
+     * export thumbnail photo in advance,
+     * it is useful in case you want to display a list of thumbnail in the list view
+     * and dont want to generate small thumb in realtime by function
+     * {@link siclo.com.ezphotopicker.api.EZPhotoPickStorage#loadStoredPhotoBitmap(String, String, int targetBitmapSize)}
+     * thumb will store in  {@link this#storageDir}
+     * with suffix is {@link PhotoIntentConstants#THUMB_NAME_SUFFIX}
+     * if you wont set thumbnail size, default value will be 200, thumbnail size must be smaller than
+     * the original photo and small than {@link this#exportingSize}
+     */
+    public boolean needToExportThumbnail = false;
+    public int exportingThumbSize = 200;
 
     /**
      * generate file name base on the current time
@@ -41,7 +54,7 @@ public class EZPhotoPickConfig implements Serializable{
      * exporting photo size to internal storage,
      * default is 0, mean original size
      */
-    public int maxExportingSize = 0;
+    public int exportingSize = 0;
 
     public ExtraAction extraAction;
     /**
@@ -53,12 +66,14 @@ public class EZPhotoPickConfig implements Serializable{
     public int unexpectedErrorStringResource;
 
 
-    public interface ExtraAction{
+    public interface ExtraAction {
         /**
          * Do anything in background if you want with the stored bitmap
          * while the loading dialog is still being shown
+         *
          * @param bitmap : Stored bitmap in internal storage
+         * @param thumbnail
          */
-        void doExtraAction(Bitmap bitmap);
+        void doExtraAction(Bitmap bitmap, Bitmap thumbnail);
     }
 }

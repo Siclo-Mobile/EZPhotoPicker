@@ -2,9 +2,10 @@ package siclo.com.ezphotopicker.storage;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.net.Uri;
 
 import java.io.IOException;
+
+import static siclo.com.ezphotopicker.models.PhotoIntentConstants.THUMB_NAME_SUFFIX;
 
 /**
  * Created by ericta on 11/13/16.
@@ -30,9 +31,13 @@ public class PhotoIntentHelperStorage {
         }
         return photoIntentHelperStorage;
     }
+    public void storePhotoBitmapThumbnail(Bitmap pickingPhoto, Bitmap.CompressFormat bitmapConfig, String storageDir, String storingPhotoName) {
+        storingPhotoName+=THUMB_NAME_SUFFIX;
+        storePhotoBitmap(pickingPhoto, bitmapConfig, storageDir, storingPhotoName);
+    }
 
-    public Bitmap storePhotoBitmap(Uri photoUri, Bitmap pickingPhoto, String internalStorageDir, String randomPhotoName) {
-        return photoInternalStorage.storePhotoBitmap(photoUri, pickingPhoto, internalStorageDir, randomPhotoName);
+    public Bitmap storePhotoBitmap(Bitmap pickingPhoto, Bitmap.CompressFormat compressFormat, String internalStorageDir, String randomPhotoName) {
+        return photoInternalStorage.storePhotoBitmap(pickingPhoto, compressFormat, internalStorageDir, randomPhotoName);
     }
 
     public void storeLatestStoredPhotoName(String randomPhotoName) {
@@ -60,6 +65,7 @@ public class PhotoIntentHelperStorage {
         String storedPhotoName = loadLatestStoredPhotoName();
         return loadStoredPhotoBitmap(storedPhotoDir, storedPhotoName, maxScaleSize);
     }
+
     public Bitmap loadStoredPhotoBitmap(String storedPhotoDir, String storedPhotoName) throws IOException {
         return loadStoredPhotoBitmap(storedPhotoDir, storedPhotoName, 0);
     }
@@ -67,4 +73,6 @@ public class PhotoIntentHelperStorage {
     public Bitmap loadStoredPhotoBitmap(String storedPhotoDir, String storedPhotoName, int maxScaleSize) throws IOException {
         return photoInternalStorage.loadStoredPhotoBitmap(storedPhotoDir, storedPhotoName, maxScaleSize);
     }
+
+
 }

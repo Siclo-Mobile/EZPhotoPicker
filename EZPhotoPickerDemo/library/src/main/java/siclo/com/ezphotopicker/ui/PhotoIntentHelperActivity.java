@@ -16,10 +16,11 @@ import android.widget.Toast;
 import siclo.com.ezphotopicker.api.models.EZPhotoPickConfig;
 import siclo.com.ezphotopicker.models.PhotoIntentConstants;
 import siclo.com.ezphotopicker.models.PhotoIntentException;
-import siclo.com.ezphotopicker.storage.PhotoIntentHelperStorage;
-import siclo.com.photointenthelper.R;
 import siclo.com.ezphotopicker.storage.PhotoGenerator;
 import siclo.com.ezphotopicker.storage.PhotoIntentContentProvider;
+import siclo.com.ezphotopicker.storage.PhotoIntentHelperStorage;
+import siclo.com.ezphotopicker.storage.PhotoUriHelper;
+import siclo.com.photointenthelper.R;
 
 /**
  * Created by ericta on 11/13/16.
@@ -49,6 +50,7 @@ public class PhotoIntentHelperActivity
         loadingView = findViewById(R.id.loading_view);
         EZPhotoPickConfig = (EZPhotoPickConfig) getIntent().getSerializableExtra(PhotoIntentConstants.PHOTO_PICK_CONFIG_KEY);
         presenter = new PhotoIntentHelperPresenter(this,
+                new PhotoUriHelper(this),
                 new PhotoGenerator(this),
                 PhotoIntentHelperStorage.getInstance(this), EZPhotoPickConfig);
         try {

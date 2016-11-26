@@ -29,7 +29,9 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 EZPhotoPickConfig config = new EZPhotoPickConfig();
                 config.photoSource = PhotoSource.GALERY;
-                config.maxExportingSize = 1000;
+                config.needToExportThumbnail = true;
+                config.exportingThumbSize = 200;
+                config.exportingSize = 1000;
                 EZPhotoPick.startPhotoPickActivity(MainActivity.this, config);
             }
         });
@@ -38,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 EZPhotoPickConfig config = new EZPhotoPickConfig();
                 config.photoSource = PhotoSource.CAMERA;
-                config.maxExportingSize = 1000;
+                config.exportingSize = 1000;
                 EZPhotoPick.startPhotoPickActivity(MainActivity.this, config);
             }
         });
@@ -53,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
 
         if(requestCode == EZPhotoPick.PHOTO_PICK_REQUEST_CODE){
             try {
-                Bitmap pickedPhoto = new EZPhotoPickStorage(this).loadLatestStoredPhotoBitmap();
+                Bitmap pickedPhoto = new EZPhotoPickStorage(this).loadLatestStoredPhotoBitmapThumbnail();
                 ivPickedPhoto.setImageBitmap(pickedPhoto);
             } catch (IOException e) {
                 e.printStackTrace();

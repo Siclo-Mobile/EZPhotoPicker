@@ -20,6 +20,7 @@ import siclo.com.ezphotopicker.models.PhotoIntentException;
 import siclo.com.ezphotopicker.storage.PhotoIntentHelperStorage;
 import siclo.com.ezphotopicker.storage.PhotoGenerator;
 import siclo.com.ezphotopicker.storage.PhotoIntentContentProvider;
+import siclo.com.ezphotopicker.storage.PhotoUriHelper;
 
 /**
  * Created by ericta on 11/13/16.
@@ -40,12 +41,14 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
 
     private PhotoIntentHelperContract.View view;
     private PhotoIntentHelperStorage photoIntentHelperStorage;
+    private PhotoUriHelper photoUriHelper;
     private PhotoGenerator photoGenerator;
     private EZPhotoPickConfig eZPhotoPickConfig;
     private String storingPhotoName;
 
-    PhotoIntentHelperPresenter(PhotoIntentHelperContract.View view, PhotoGenerator photoGenerator, PhotoIntentHelperStorage photoIntentHelperStorage, EZPhotoPickConfig eZPhotoPickConfig) {
+    PhotoIntentHelperPresenter(PhotoIntentHelperContract.View view, PhotoUriHelper photoUriHelper, PhotoGenerator photoGenerator, PhotoIntentHelperStorage photoIntentHelperStorage, EZPhotoPickConfig eZPhotoPickConfig) {
         this.view = view;
+        this.photoUriHelper = photoUriHelper;
         this.photoGenerator = photoGenerator;
         this.photoIntentHelperStorage = photoIntentHelperStorage;
         this.eZPhotoPickConfig = eZPhotoPickConfig;
@@ -101,18 +104,31 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
     }
 
     private void processPickedUriInBackground(final Uri photoUri) {
+
+        generateStoringPhotoName();
+        photoIntentHelperStorage.storeLatestStoredPhotoName(storingPhotoName);
+        photoIntentHelperStorage.storeLatestStoredPhotoDir(eZPhotoPickConfig.storageDir);
+
         new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        Bitmap pickingPhoto = photoGenerator.generatePhotoWithValue(photoUri, eZPhotoPickConfig.maxExportingSize, eZPhotoPickConfig.needToRotateByExif);
-                        generateStoringPhotoName();
-                        photoIntentHelperStorage.storeLatestStoredPhotoName(storingPhotoName);
-                        photoIntentHelperStorage.storeLatestStoredPhotoDir(eZPhotoPickConfig.internalStorageDir);
-                        Bitmap storedBitmap = photoIntentHelperStorage.storePhotoBitmap(photoUri, pickingPhoto, eZPhotoPickConfig.internalStorageDir, storingPhotoName);
-                        if(eZPhotoPickConfig.extraAction !=null){
-                            eZPhotoPickConfig.extraAction.doExtraAction(storedBitmap);
+                        Bitmap pickingPhoto = photoGenerator.generatePhotoWithValue(photoUri, eZPhotoPickConfig);
+
+                        Bitmap.CompressFormat bitmapConfig = photoUriHelper.getUriPhotoBitmapFormat(photoUri);
+
+                        photoIntentHelperStorage.storePhotoBitmap(pickingPhoto, bitmapConfig, eZPhotoPickConfig.storageDir, storingPhotoName);
+
+                        Bitmap thumbnail = null;
+                        if(eZPhotoPickConfig.needToExportThumbnail){
+                            thumbnail = photoGenerator.scalePhotoByMaxSize(eZPhotoPickConfig.exportingThumbSize, pickingPhoto);
+                            photoIntentHelperStorage.storePhotoBitmapThumbnail(thumbnail, bitmapConfig, eZPhotoPickConfig.storageDir, storingPhotoName);
                         }
+
+                        if(eZPhotoPickConfig.extraAction !=null){
+                            eZPhotoPickConfig.extraAction.doExtraAction(pickingPhoto, thumbnail);
+                        }
+
                         photoPickHandler.sendEmptyMessage(STORE_SUCCESS_MSG);
                     } catch (IOException e) {
                         e.printStackTrace();
