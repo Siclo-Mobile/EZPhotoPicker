@@ -35,10 +35,10 @@ public class EZPhotoPickConfig implements Serializable {
      * it is useful in case you want to display a list of thumbnail in the list view
      * and dont want to generate small thumb in realtime by function
      * {@link siclo.com.ezphotopicker.api.EZPhotoPickStorage#loadStoredPhotoBitmap(String, String, int targetBitmapSize)}
-     * thumb will store in  {@link this#storageDir}
+     * thumb will store in  {@link storageDir}
      * with suffix is {@link PhotoIntentConstants#THUMB_NAME_SUFFIX}
      * if you wont set thumbnail size, default value will be 200, thumbnail size must be smaller than
-     * the original photo and small than {@link this#exportingSize}
+     * the original photo and small than {@link exportingSize}
      */
     public boolean needToExportThumbnail = false;
     public int exportingThumbSize = 200;
@@ -51,7 +51,7 @@ public class EZPhotoPickConfig implements Serializable {
     public boolean isGenerateUniqueName = false;
     /**
      * the exported photo name if you do not want the app to random the name base on time
-     * with {@link this#isGenerateUniqueName} = true or default name if false
+     * with {@link isGenerateUniqueName} = true or default name if false
      */
     public String exportedPhotoName = null;
 
