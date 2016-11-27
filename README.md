@@ -1,5 +1,7 @@
 #EZPhotoPicker
 If you want to pick up a photo from  the gallery and camera, store it somewhere then do something, this library will be the best choice for you. It will handle all the storing, scaling, rotating, threading, loading dialog. Easy to start a photo intent, easy to get the result, you won't need to code a lot as what you used to do.
+ 
+It also help you to handle about realtime permission without any lines of code.
 
 Try it, you will see what I mean.
 
