@@ -49,6 +49,11 @@ public class EZPhotoPickConfig implements Serializable {
      * {@link PhotoIntentConstants#TEMP_STORING_PHOTO_NAME}
      */
     public boolean isGenerateUniqueName = false;
+    /**
+     * the exported photo name if you do not want the app to random the name base on time
+     * with {@link this#isGenerateUniqueName} = true or default name if false
+     */
+    public String exportedPhotoName = null;
 
     /**
      * exporting photo size to internal storage,
@@ -56,7 +61,6 @@ public class EZPhotoPickConfig implements Serializable {
      */
     public int exportingSize = 0;
 
-    public ExtraAction extraAction;
     /**
      * Error message resource id
      * default is hard string by english
@@ -66,13 +70,14 @@ public class EZPhotoPickConfig implements Serializable {
     public int unexpectedErrorStringResource;
 
 
+    public ExtraAction extraAction;
     public interface ExtraAction {
         /**
          * Do anything in background if you want with the stored bitmap
          * while the loading dialog is still being shown
          *
          * @param bitmap : Stored bitmap in internal storage
-         * @param thumbnail
+         * @param thumbnail : exported thumbnail
          */
         void doExtraAction(Bitmap bitmap, Bitmap thumbnail);
     }

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -140,12 +141,20 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
     }
 
     private void generateStoringPhotoName() {
+
+        if(!TextUtils.isEmpty(eZPhotoPickConfig.exportedPhotoName)){
+            storingPhotoName = eZPhotoPickConfig.exportedPhotoName;
+            return;
+        }
+
         if(eZPhotoPickConfig.isGenerateUniqueName){
             String currentTimeStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss'Z'").format(new Date());
             storingPhotoName = currentTimeStr;
             return;
         }
+
         storingPhotoName = PhotoIntentConstants.TEMP_STORING_PHOTO_NAME;
+
     }
 
     @Override
