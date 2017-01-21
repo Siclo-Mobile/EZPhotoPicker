@@ -10,6 +10,7 @@ import android.view.Surface;
 
 import siclo.com.ezphotopicker.api.models.EZPhotoPickConfig;
 import siclo.com.ezphotopicker.models.PhotoIntentConstants;
+import siclo.com.ezphotopicker.models.PhotoIntentException;
 import siclo.com.ezphotopicker.ui.PhotoIntentHelperActivity;
 
 /**
@@ -31,14 +32,20 @@ public class EZPhotoPick {
         activity.overridePendingTransition(0, 0);
     }
 
-    public static void startPhotoPickActivity(Fragment fragment, EZPhotoPickConfig config){
+    public static void startPhotoPickActivity(Fragment fragment, EZPhotoPickConfig config) throws PhotoIntentException {
+        Activity activity = fragment.getActivity();
+        if(activity == null){
+            throw new PhotoIntentException("Can not find the host activity of fragment");
+        }
         Intent intent = new Intent(fragment.getContext(), PhotoIntentHelperActivity.class);
-        int orientation = getScreenOrientation(fragment.getActivity());
+        int orientation = getScreenOrientation(activity);
         intent.putExtra(PhotoIntentConstants.PHOTO_PICK_CONFIG_KEY, config);
         intent.putExtra(PhotoIntentConstants.SCREEN_ORIENTATION, orientation);
         fragment.startActivityForResult(intent, PHOTO_PICK_REQUEST_CODE);
-        fragment.getActivity().overridePendingTransition(0, 0);
+        activity.overridePendingTransition(0, 0);
     }
+
+
 
     private static int getScreenOrientation(Activity activity) {
         int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
