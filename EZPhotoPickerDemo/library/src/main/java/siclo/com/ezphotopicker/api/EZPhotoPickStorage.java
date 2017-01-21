@@ -42,6 +42,7 @@ public class EZPhotoPickStorage {
         String storedPhotoName = loadLatestStoredPhotoName();
         return loadStoredPhotoBitmap(storedPhotoDir, storedPhotoName, maxScaleSize);
     }
+
     public Bitmap loadStoredPhotoBitmap(String storedPhotoDir, String storedPhotoName) throws IOException {
         return loadStoredPhotoBitmap(storedPhotoDir, storedPhotoName, 0);
     }

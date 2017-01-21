@@ -3,6 +3,7 @@ package siclo.com.ezphotopicker.api;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Surface;
@@ -28,6 +29,15 @@ public class EZPhotoPick {
         intent.putExtra(PhotoIntentConstants.SCREEN_ORIENTATION, orientation);
         activity.startActivityForResult(intent, PHOTO_PICK_REQUEST_CODE);
         activity.overridePendingTransition(0, 0);
+    }
+
+    public static void startPhotoPickActivity(Fragment fragment, EZPhotoPickConfig config){
+        Intent intent = new Intent(fragment.getContext(), PhotoIntentHelperActivity.class);
+        int orientation = getScreenOrientation(fragment.getActivity());
+        intent.putExtra(PhotoIntentConstants.PHOTO_PICK_CONFIG_KEY, config);
+        intent.putExtra(PhotoIntentConstants.SCREEN_ORIENTATION, orientation);
+        fragment.startActivityForResult(intent, PHOTO_PICK_REQUEST_CODE);
+        fragment.getActivity().overridePendingTransition(0, 0);
     }
 
     private static int getScreenOrientation(Activity activity) {
