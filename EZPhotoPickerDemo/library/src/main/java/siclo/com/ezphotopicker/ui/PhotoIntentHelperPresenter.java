@@ -10,17 +10,19 @@ import android.os.Message;
 import android.text.TextUtils;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import siclo.com.ezphotopicker.api.models.EZPhotoPickConfig;
 import siclo.com.ezphotopicker.api.models.PhotoSource;
 import siclo.com.ezphotopicker.models.PhotoIntentConstants;
 import siclo.com.ezphotopicker.models.PhotoIntentException;
-import siclo.com.ezphotopicker.storage.PhotoIntentHelperStorage;
 import siclo.com.ezphotopicker.storage.PhotoGenerator;
 import siclo.com.ezphotopicker.storage.PhotoIntentContentProvider;
+import siclo.com.ezphotopicker.storage.PhotoIntentHelperStorage;
 import siclo.com.ezphotopicker.storage.PhotoUriHelper;
 
 /**
@@ -71,7 +73,7 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
         }
 
         if(eZPhotoPickConfig.photoSource == PhotoSource.CAMERA){
-            view.requestCameraPermission();
+            view.requestCameraAndExternalStoragePermission(eZPhotoPickConfig.needToAddToGallery);
         }else{
             onPickPhotoWithGalery();
         }
@@ -120,14 +122,14 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
 
                         photoIntentHelperStorage.storePhotoBitmap(pickingPhoto, bitmapConfig, eZPhotoPickConfig.storageDir, storingPhotoName);
 
-                        Bitmap thumbnail = null;
+                        Bitmap thumbnail;
                         if(eZPhotoPickConfig.needToExportThumbnail){
                             thumbnail = photoGenerator.scalePhotoByMaxSize(eZPhotoPickConfig.exportingThumbSize, pickingPhoto);
                             photoIntentHelperStorage.storePhotoBitmapThumbnail(thumbnail, bitmapConfig, eZPhotoPickConfig.storageDir, storingPhotoName);
                         }
 
-                        if(eZPhotoPickConfig.extraAction !=null){
-                            eZPhotoPickConfig.extraAction.doExtraAction(pickingPhoto, thumbnail);
+                        if(eZPhotoPickConfig.needToAddToGallery){
+                            addLastestCapturedPhotoToGallery(pickingPhoto);
                         }
 
                         photoPickHandler.sendEmptyMessage(STORE_SUCCESS_MSG);
@@ -163,6 +165,25 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
         File photoFile = new File(internalDir, PhotoIntentContentProvider.TEMP_PHOTO_NAME);
         photoUri = Uri.fromFile(photoFile);
         onPhotoPicked();
+    }
+
+    private void addLastestCapturedPhotoToGallery(Bitmap thumb) {
+        try {
+            Calendar calendar = Calendar.getInstance();
+            String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString();
+            File myDir = new File(root);
+            myDir.mkdirs();
+            String fname = calendar.getTime().getTime()+".jpg";
+            File file = new File(myDir, fname);
+            if (file.exists()) file.delete();
+            FileOutputStream out = new FileOutputStream(file);
+            thumb.compress(Bitmap.CompressFormat.JPEG, 90, out);
+            out.flush();
+            out.close();
+            view.sendBroadcastToScanFileInGallery(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

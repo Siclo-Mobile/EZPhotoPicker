@@ -25,13 +25,15 @@ interface PhotoIntentHelperContract {
 
         void finishWithNoResult();
 
-        void requestCameraPermission();
+        void requestCameraAndExternalStoragePermission(boolean needToAddToGallery);
 
         void openCamera();
 
         void requestReadExternalStoragePermission();
 
         void showToastMessagePermissionDenied(int permisionDeniedErrorStringResource);
+
+        void sendBroadcastToScanFileInGallery(File file);
     }
 
     interface Presenter{

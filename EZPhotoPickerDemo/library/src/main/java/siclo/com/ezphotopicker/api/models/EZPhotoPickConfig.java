@@ -31,6 +31,11 @@ public class EZPhotoPickConfig implements Serializable {
     public boolean needToRotateByExif = true;
 
     /**
+     * Add to gallery after capturing photo
+     */
+    public boolean needToAddToGallery = false;
+
+    /**
      * export thumbnail photo in advance,
      * it is useful in case you want to display a list of thumbnail in the list view
      * and dont want to generate small thumb in realtime by function
@@ -68,17 +73,4 @@ public class EZPhotoPickConfig implements Serializable {
      */
     public int permisionDeniedErrorStringResource;
     public int unexpectedErrorStringResource;
-
-
-    public ExtraAction extraAction;
-    public interface ExtraAction {
-        /**
-         * Do anything in background if you want with the stored bitmap
-         * while the loading dialog is still being shown
-         *
-         * @param bitmap : Stored bitmap in internal storage
-         * @param thumbnail : exported thumbnail
-         */
-        void doExtraAction(Bitmap bitmap, Bitmap thumbnail);
-    }
 }

@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -12,6 +13,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
+
+import java.io.File;
 
 import siclo.com.ezphotopicker.api.models.EZPhotoPickConfig;
 import siclo.com.ezphotopicker.models.PhotoIntentConstants;
@@ -87,7 +90,7 @@ public class PhotoIntentHelperActivity
     @Override
     public void showPickPhotoFromGalleryError(int unexpectedErrorStringResource) {
         String message = "Unexpected error, please try again";
-        if(unexpectedErrorStringResource != 0){
+        if (unexpectedErrorStringResource != 0) {
             message = getString(unexpectedErrorStringResource);
         }
         Toast.makeText(PhotoIntentHelperActivity.this, message
@@ -100,9 +103,15 @@ public class PhotoIntentHelperActivity
     }
 
     @Override
-    public void requestCameraPermission() {
+    public void requestCameraAndExternalStoragePermission(boolean needToAddToGallery) {
+        String[] permissions;
+        if (needToAddToGallery) {
+            permissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        } else {
+            permissions = new String[]{Manifest.permission.CAMERA};
+        }
         ActivityCompat.requestPermissions(PhotoIntentHelperActivity.this,
-                new String[]{Manifest.permission.CAMERA},
+                permissions,
                 REQUEST_CAMERA_PERMISSION);
     }
 
@@ -123,7 +132,7 @@ public class PhotoIntentHelperActivity
     @Override
     public void showToastMessagePermissionDenied(int permisionDeniedErrorStringResource) {
         String message = "Permission denied, cannot complete the action";
-        if(permisionDeniedErrorStringResource != 0){
+        if (permisionDeniedErrorStringResource != 0) {
             message = getString(permisionDeniedErrorStringResource);
         }
         Toast.makeText(PhotoIntentHelperActivity.this, message
@@ -131,9 +140,25 @@ public class PhotoIntentHelperActivity
     }
 
     @Override
+    public void sendBroadcastToScanFileInGallery(File file) {
+        sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        boolean isGrantedPermission = grantResults.length > 0
-                && grantResults[0] == PackageManager.PERMISSION_GRANTED;
+
+        if (grantResults.length == 0) {
+            presenter.onRequestPermissionDenied();
+            return;
+        }
+
+        boolean isGrantedPermission = true;
+        for (Integer grantResult : grantResults) {
+            if (grantResult != PackageManager.PERMISSION_GRANTED) {
+                isGrantedPermission = false;
+                break;
+            }
+        }
 
         if (!isGrantedPermission) {
             presenter.onRequestPermissionDenied();
@@ -142,10 +167,10 @@ public class PhotoIntentHelperActivity
 
         switch (requestCode) {
             case REQUEST_CAMERA_PERMISSION: {
-                    presenter.onRequestCameraPermissionGranted();
+                presenter.onRequestCameraPermissionGranted();
                 break;
             }
-            case REQUEST_READ_EXTERNAL_STORAGE_PERMISSION:{
+            case REQUEST_READ_EXTERNAL_STORAGE_PERMISSION: {
                 presenter.onRequestReadExternalPermissionGranted();
                 break;
             }

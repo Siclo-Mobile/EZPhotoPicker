@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 EZPhotoPickConfig config = new EZPhotoPickConfig();
                 config.photoSource = PhotoSource.CAMERA;
+                config.needToAddToGallery = true;
                 config.exportingSize = 1000;
                 EZPhotoPick.startPhotoPickActivity(MainActivity.this, config);
             }
@@ -55,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
         if(requestCode == EZPhotoPick.PHOTO_PICK_REQUEST_CODE){
             try {
-                Bitmap pickedPhoto = new EZPhotoPickStorage(this).loadLatestStoredPhotoBitmapThumbnail();
+                Bitmap pickedPhoto = new EZPhotoPickStorage(this).loadLatestStoredPhotoBitmap(300);
                 ivPickedPhoto.setImageBitmap(pickedPhoto);
             } catch (IOException e) {
                 e.printStackTrace();
