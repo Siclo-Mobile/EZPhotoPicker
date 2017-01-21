@@ -31,6 +31,7 @@ public class EZPhotoPickStorage {
     public Bitmap loadLatestStoredPhotoBitmap() throws IOException {
         return loadLatestStoredPhotoBitmap(0);
     }
+
     public Bitmap loadLatestStoredPhotoBitmapThumbnail() throws IOException {
         String storedPhotoDir = loadLatestStoredPhotoDir();
         String storedPhotoName = loadLatestStoredPhotoName() + PhotoIntentConstants.THUMB_NAME_SUFFIX;
@@ -55,4 +56,9 @@ public class EZPhotoPickStorage {
     public Bitmap loadStoredPhotoBitmap(String storedPhotoDir, String storedPhotoName, int maxScaleSize) throws IOException {
         return photoIntentHelperStorage.loadStoredPhotoBitmap(storedPhotoDir, storedPhotoName, maxScaleSize);
     }
+
+    public boolean removePhoto(String storedPhotoDir, String storedPhotoName) throws IOException {
+        return photoIntentHelperStorage.removePhoto(storedPhotoDir, storedPhotoName);
+    }
+
 }

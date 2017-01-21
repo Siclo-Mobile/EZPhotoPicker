@@ -1,12 +1,9 @@
 package siclo.com.ezphotopicker.storage;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.webkit.MimeTypeMap;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -43,7 +40,7 @@ class PhotoInternalStorage {
 
 
     @NonNull
-    private File getPhotoByName(String internalStorageDir, String attachmentId) {
+    private File getPhotoByName(String internalStorageDir, String fileName) {
         File file;
         if (TextUtils.isEmpty(internalStorageDir)) {
             file = new File(context.getFilesDir().getAbsolutePath());
@@ -53,10 +50,18 @@ class PhotoInternalStorage {
         if (!file.exists()) {
             file.mkdirs();
         }
-        return new File(file, attachmentId);
+        return new File(file, fileName);
     }
 
     public Bitmap loadStoredPhotoBitmap(String internalStorageDir, String storedPhotoName, int maxScaleSize) throws IOException {
         return loadPhoto(internalStorageDir, storedPhotoName, maxScaleSize);
+    }
+
+    public boolean removePhoto(String storedPhotoDir, String storedPhotoName) {
+        File file = getPhotoByName(storedPhotoDir, storedPhotoName);
+        if (file.exists()) {
+           return file.mkdirs();
+        }
+        return false;
     }
 }
