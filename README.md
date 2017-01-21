@@ -18,7 +18,7 @@ repositories {
 ```
 
 ```javascript
-compile 'com.siclo.ezphotopick:library:1.0.1'
+compile 'com.siclo.ezphotopick:library:1.0.2'
 ```
 
 ##Usage
