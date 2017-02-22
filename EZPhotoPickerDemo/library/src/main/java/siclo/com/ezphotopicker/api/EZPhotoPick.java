@@ -20,6 +20,8 @@ import siclo.com.ezphotopicker.ui.PhotoIntentHelperActivity;
 public class EZPhotoPick {
 
     public static final int PHOTO_PICK_REQUEST_CODE = 9067;
+    public static final String PICKED_PHOTO_NAME_KEY = "PICKED_PHOTO_NAME";
+    public static final String PICKED_PHOTO_NAMES_KEY = "PICKED_PHOTO_NAMES_KEY";
 
     private static final String TAG = EZPhotoPick.class.getSimpleName();
 

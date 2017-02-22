@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import siclo.com.ezphotopicker.models.PhotoIntentException;
 
@@ -15,11 +16,11 @@ interface PhotoIntentHelperContract {
 
     interface View{
 
-        void openGallery();
+        void openGallery(boolean isAllowMultipleSelect);
 
         void showLoading();
 
-        void finishPickPhotoWithSuccessResult();
+        void finishPickPhotoWithSuccessResult(String pickedPhotoName, ArrayList<String> pickedPhotoNames);
 
         void showPickPhotoFromGalleryError(int unexpectedErrorStringResource);
 
