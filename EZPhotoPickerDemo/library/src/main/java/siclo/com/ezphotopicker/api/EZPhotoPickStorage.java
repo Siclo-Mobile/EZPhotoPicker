@@ -53,4 +53,8 @@ public class EZPhotoPickStorage {
         return photoIntentHelperStorage.removePhoto(storedPhotoDir, storedPhotoName);
     }
 
+    public String getAbsolutePathOfStoredPhoto(String storedPhotoDir, String storedPhotoName){
+        return photoIntentHelperStorage.getAbsolutePathOfStoredPhoto(storedPhotoDir, storedPhotoName);
+    }
+
 }

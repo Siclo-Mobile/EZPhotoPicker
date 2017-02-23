@@ -78,4 +78,8 @@ public class PhotoIntentHelperStorage {
     public boolean removePhoto(String storedPhotoDir, String storedPhotoName) {
         return photoInternalStorage.removePhoto(storedPhotoDir, storedPhotoName);
     }
+
+    public String getAbsolutePathOfStoredPhoto(String storedPhotoDir, String storedPhotoName) {
+        return photoInternalStorage.getAbsolutePathOfStoredPhoto(storedPhotoDir, storedPhotoName);
+    }
 }
