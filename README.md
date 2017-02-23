@@ -29,29 +29,44 @@ For full example, please refer to sample
 ```javascript
 EZPhotoPickConfig config = new EZPhotoPickConfig();
 config.photoSource = PhotoSource.GALERY; // or PhotoSource.CAMERA
+config.isAllowMultipleSelect = true; // only for GALERY pick and API >18
 config.maxExportingSize = 1000;
 EZPhotoPick.startPhotoPickActivity(MainActivity.this, config);
 ```
 *For more configurations, check EZPhotoPickConfig class*
 
-####Receive result
-
-```javascript
-    @Override
+####Receive result `onActivityResult`
+###### For simplest way, load and use the bitmap, and dont care about the photo name/path:
+```
+@Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode != RESULT_OK){
+        if (resultCode != RESULT_OK) {
             return;
         }
 
-        if(requestCode == EZPhotoPick.PHOTO_PICK_REQUEST_CODE){
-            try {
-                Bitmap pickedPhoto = new EZPhotoPickStorage(this).loadLatestStoredPhotoBitmap();
-                ivPickedPhoto.setImageBitmap(pickedPhoto);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        if (requestCode == EZPhotoPick.PHOTO_PICK_GALERY_REQUEST_CODE || requestCode == EZPhotoPick.PHOTO_PICK_CAMERA_REQUEST_CODE) {
+              Bitmap pickedPhoto = new EZPhotoPickStorage(this).loadLatestStoredPhotoBitmap();
+              //do something with the bitmap
         }
+    }
+```
+###### Or you need the photo name
+```javascript
+    String photoName = data.getStringExtra(EZPhotoPick.PICKED_PHOTO_NAME_KEY);
+    Bitmap pickedPhoto = ezPhotoPickStorage.loadStoredPhotoBitmap(photoDir, photoName, 300);
+```
+###### Or you need the absolute stored photo path for doing something
+```javascript
+    String photoName = data.getStringExtra(EZPhotoPick.PICKED_PHOTO_NAME_KEY);
+    String photoPath = ezPhotoPickStorage.getAbsolutePathOfStoredPhoto(photoDir, photoName);
+    //do something with the path
+```
+###### Or multiple photos (Only for galery pick)
+```javascript
+    ArrayList<String> pickedPhotoNames = data.getStringArrayListExtra(EZPhotoPick.PICKED_PHOTO_NAMES_KEY);
+    for(String photoName: photoNames){
+       Bitmap pickedPhoto = ezPhotoPickStorage.loadStoredPhotoBitmap(photoDir, photoName, 300);
     }
 ```
 *For more public api for the storage, check EZPhotoPickStorage class*
