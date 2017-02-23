@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         llPhotoContainer = (LinearLayout) findViewById(R.id.photo_container);
+        ezPhotoPickStorage = new EZPhotoPickStorage(this);
         findViewById(R.id.bt_gallery).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,26 +59,28 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode != RESULT_OK){
+        if (resultCode != RESULT_OK) {
             return;
         }
 
-        if(requestCode == EZPhotoPick.PHOTO_PICK_REQUEST_CODE){
+        if (requestCode == EZPhotoPick.PHOTO_PICK_GALERY_REQUEST_CODE) {
             try {
                 ArrayList<String> pickedPhotoNames = data.getStringArrayListExtra(EZPhotoPick.PICKED_PHOTO_NAMES_KEY);
-                showPickedPhotos(DEMO_PHOTO_PATH ,pickedPhotoNames);
+                showPickedPhotos(DEMO_PHOTO_PATH, pickedPhotoNames);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else if (requestCode == EZPhotoPick.PHOTO_PICK_CAMERA_REQUEST_CODE) {
+            try {
+                Bitmap pickedPhoto = ezPhotoPickStorage.loadLatestStoredPhotoBitmap(300);
+                showPickedPhoto(pickedPhoto);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
-
     private void showPickedPhotos(String photoDir, List<String> photoNames) throws IOException {
         llPhotoContainer.removeAllViews();
-        if(ezPhotoPickStorage == null){
-            ezPhotoPickStorage = new EZPhotoPickStorage(this);
-        }
-
         for(String photoName: photoNames){
             Bitmap pickedPhoto = ezPhotoPickStorage.loadStoredPhotoBitmap(photoDir, photoName, 300);
             showPickedPhoto(pickedPhoto);
