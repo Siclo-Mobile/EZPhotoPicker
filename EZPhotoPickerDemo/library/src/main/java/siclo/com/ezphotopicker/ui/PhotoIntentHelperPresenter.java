@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import siclo.com.ezphotopicker.api.models.EZPhotoPickConfig;
 import siclo.com.ezphotopicker.api.models.PhotoSource;
@@ -90,7 +91,7 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
     @Override
     public void onPhotoPickedFromGallery(final Intent data) {
         photoUriList.clear();
-        if (isAllowMultipleSelect) {
+        if (isAllowMultipleSelect && data.getClipData()!= null) {
             for (int i = 0; i < data.getClipData().getItemCount(); i++) {
                 photoUriList.add(data.getClipData().getItemAt(i).getUri());
             }
@@ -170,8 +171,7 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
     private void generateStoringPhotoName() {
 
         if (eZPhotoPickConfig.isGenerateUniqueName || isPickingMultiplePhotoFromGalery()) {
-            String currentTimeStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss'Z'").format(new Date());
-            storingPhotoName = currentTimeStr;
+            storingPhotoName = UUID.randomUUID().toString();
             return;
         }
 

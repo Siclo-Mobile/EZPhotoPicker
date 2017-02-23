@@ -27,18 +27,19 @@
         android:layout_height="wrap_content"
         android:text="Pick photo from camera"/>
 
-    <ImageView
-        android:id="@+id/iv_photo"
-        android:layout_gravity="center"
-        android:adjustViewBounds="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:scaleType="fitCenter"
-        android:src="@mipmap/ic_launcher"
-        />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:id="@+id/photo_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"/>
+    </ScrollView>
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Picked Photo"/>
+        android:text="Picked Photos"/>
 </LinearLayout>
