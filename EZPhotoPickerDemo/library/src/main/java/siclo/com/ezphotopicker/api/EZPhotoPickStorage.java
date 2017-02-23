@@ -20,27 +20,19 @@ public class EZPhotoPickStorage {
         photoIntentHelperStorage = PhotoIntentHelperStorage.getInstance(context);
     }
 
-    public String loadLatestStoredPhotoName() {
-        return photoIntentHelperStorage.loadLatestStoredPhotoName();
-    }
-
-    public String loadLatestStoredPhotoDir() {
-        return photoIntentHelperStorage.loadLatestStoredPhotoDir();
-    }
-
     public Bitmap loadLatestStoredPhotoBitmap() throws IOException {
         return loadLatestStoredPhotoBitmap(0);
     }
 
     public Bitmap loadLatestStoredPhotoBitmapThumbnail() throws IOException {
-        String storedPhotoDir = loadLatestStoredPhotoDir();
-        String storedPhotoName = loadLatestStoredPhotoName() + PhotoIntentConstants.THUMB_NAME_SUFFIX;
+        String storedPhotoDir = photoIntentHelperStorage.loadLatestStoredPhotoDir();
+        String storedPhotoName = photoIntentHelperStorage.loadLatestStoredPhotoName() + PhotoIntentConstants.THUMB_NAME_SUFFIX;
         return loadStoredPhotoBitmap(storedPhotoDir, storedPhotoName, 0);
     }
 
     public Bitmap loadLatestStoredPhotoBitmap(int maxScaleSize) throws IOException {
-        String storedPhotoDir = loadLatestStoredPhotoDir();
-        String storedPhotoName = loadLatestStoredPhotoName();
+        String storedPhotoDir = photoIntentHelperStorage.loadLatestStoredPhotoDir();
+        String storedPhotoName = photoIntentHelperStorage.loadLatestStoredPhotoName();
         return loadStoredPhotoBitmap(storedPhotoDir, storedPhotoName, maxScaleSize);
     }
 
@@ -59,6 +51,10 @@ public class EZPhotoPickStorage {
 
     public boolean removePhoto(String storedPhotoDir, String storedPhotoName) throws IOException {
         return photoIntentHelperStorage.removePhoto(storedPhotoDir, storedPhotoName);
+    }
+
+    public String getAbsolutePathOfStoredPhoto(String storedPhotoDir, String storedPhotoName){
+        return photoIntentHelperStorage.getAbsolutePathOfStoredPhoto(storedPhotoDir, storedPhotoName);
     }
 
 }

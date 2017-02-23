@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Surface;
 
 import siclo.com.ezphotopicker.api.models.EZPhotoPickConfig;
+import siclo.com.ezphotopicker.api.models.PhotoSource;
 import siclo.com.ezphotopicker.models.PhotoIntentConstants;
 import siclo.com.ezphotopicker.models.PhotoIntentException;
 import siclo.com.ezphotopicker.ui.PhotoIntentHelperActivity;
@@ -19,7 +20,11 @@ import siclo.com.ezphotopicker.ui.PhotoIntentHelperActivity;
 
 public class EZPhotoPick {
 
-    public static final int PHOTO_PICK_REQUEST_CODE = 9067;
+    public static final int PHOTO_PICK_CAMERA_REQUEST_CODE = 9067;
+    public static final int PHOTO_PICK_GALERY_REQUEST_CODE = 9068;
+
+    public static final String PICKED_PHOTO_NAME_KEY = "PICKED_PHOTO_NAME";
+    public static final String PICKED_PHOTO_NAMES_KEY = "PICKED_PHOTO_NAMES_KEY";
 
     private static final String TAG = EZPhotoPick.class.getSimpleName();
 
@@ -28,7 +33,8 @@ public class EZPhotoPick {
         int orientation = getScreenOrientation(activity);
         intent.putExtra(PhotoIntentConstants.PHOTO_PICK_CONFIG_KEY, config);
         intent.putExtra(PhotoIntentConstants.SCREEN_ORIENTATION, orientation);
-        activity.startActivityForResult(intent, PHOTO_PICK_REQUEST_CODE);
+        int requestCode = config.photoSource == PhotoSource.GALERY ? PHOTO_PICK_GALERY_REQUEST_CODE : PHOTO_PICK_CAMERA_REQUEST_CODE;
+        activity.startActivityForResult(intent, requestCode);
         activity.overridePendingTransition(0, 0);
     }
 
@@ -41,7 +47,8 @@ public class EZPhotoPick {
         int orientation = getScreenOrientation(activity);
         intent.putExtra(PhotoIntentConstants.PHOTO_PICK_CONFIG_KEY, config);
         intent.putExtra(PhotoIntentConstants.SCREEN_ORIENTATION, orientation);
-        fragment.startActivityForResult(intent, PHOTO_PICK_REQUEST_CODE);
+        int requestCode = config.photoSource == PhotoSource.GALERY ? PHOTO_PICK_GALERY_REQUEST_CODE : PHOTO_PICK_CAMERA_REQUEST_CODE;
+        fragment.startActivityForResult(intent, requestCode);
         activity.overridePendingTransition(0, 0);
     }
 

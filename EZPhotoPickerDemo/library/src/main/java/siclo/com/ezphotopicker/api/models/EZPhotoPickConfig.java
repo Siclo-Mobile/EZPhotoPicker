@@ -54,6 +54,7 @@ public class EZPhotoPickConfig implements Serializable {
      * {@link PhotoIntentConstants#TEMP_STORING_PHOTO_NAME}
      */
     public boolean isGenerateUniqueName = false;
+    public boolean isAllowMultipleSelect = false;
     /**
      * the exported photo name if you do not want the app to random the name base on time
      * with {@link isGenerateUniqueName} = true or default name if false

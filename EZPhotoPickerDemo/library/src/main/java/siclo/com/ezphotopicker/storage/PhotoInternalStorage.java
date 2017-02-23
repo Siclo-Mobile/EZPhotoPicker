@@ -18,7 +18,7 @@ class PhotoInternalStorage {
     }
 
     public Bitmap storePhotoBitmap(Bitmap bitmapImage, Bitmap.CompressFormat compressFormat ,String internalStorageDir, String fileName) {
-        File photoPath = getPhotoByName(internalStorageDir, fileName);
+        File photoPath = getPhotoFile(internalStorageDir, fileName);
         FileOutputStream fos;
         try {
             fos = new FileOutputStream(photoPath);
@@ -33,14 +33,14 @@ class PhotoInternalStorage {
 
 
     public Bitmap loadPhoto(String internalStorageDir, String fileName, int maxScaleSize) throws IOException {
-        File photoPath = getPhotoByName(internalStorageDir, fileName);
+        File photoPath = getPhotoFile(internalStorageDir, fileName);
         PhotoGenerator photoGenerator = new PhotoGenerator(context);
         return photoGenerator.generatePhotoWithValue(photoPath.getAbsolutePath(), maxScaleSize);
     }
 
 
     @NonNull
-    private File getPhotoByName(String internalStorageDir, String fileName) {
+    private File getPhotoFile(String internalStorageDir, String fileName) {
         File file;
         if (TextUtils.isEmpty(internalStorageDir)) {
             file = new File(context.getFilesDir().getAbsolutePath());
@@ -58,10 +58,14 @@ class PhotoInternalStorage {
     }
 
     public boolean removePhoto(String storedPhotoDir, String storedPhotoName) {
-        File file = getPhotoByName(storedPhotoDir, storedPhotoName);
+        File file = getPhotoFile(storedPhotoDir, storedPhotoName);
         if (file.exists()) {
            return file.mkdirs();
         }
         return false;
+    }
+
+    public String getAbsolutePathOfStoredPhoto(String storedPhotoDir, String storedPhotoName) {
+        return getPhotoFile(storedPhotoDir, storedPhotoName).getAbsolutePath();
     }
 }

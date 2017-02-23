@@ -1,11 +1,13 @@
 package siclo.com.ezphotopicker.ui;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -15,6 +17,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import siclo.com.ezphotopicker.api.models.EZPhotoPickConfig;
 import siclo.com.ezphotopicker.models.PhotoIntentConstants;
@@ -24,6 +27,9 @@ import siclo.com.ezphotopicker.storage.PhotoIntentContentProvider;
 import siclo.com.ezphotopicker.storage.PhotoIntentHelperStorage;
 import siclo.com.ezphotopicker.storage.PhotoUriHelper;
 import siclo.com.photointenthelper.R;
+
+import static siclo.com.ezphotopicker.api.EZPhotoPick.PICKED_PHOTO_NAMES_KEY;
+import static siclo.com.ezphotopicker.api.EZPhotoPick.PICKED_PHOTO_NAME_KEY;
 
 /**
  * Created by ericta on 11/13/16.
@@ -64,9 +70,13 @@ public class PhotoIntentHelperActivity
     }
 
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Override
-    public void openGallery() {
+    public void openGallery(boolean isAllowMultipleSelect) {
         Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        if(isAllowMultipleSelect){
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        }
         intent.setType("image/*");
         startActivityForResult(intent, PICK_PHOTO_FROM_GALLERY);
     }
@@ -77,8 +87,11 @@ public class PhotoIntentHelperActivity
     }
 
     @Override
-    public void finishPickPhotoWithSuccessResult() {
-        setResult(RESULT_OK);
+    public void finishPickPhotoWithSuccessResult(String pickedPhotoName, ArrayList<String> pickedPhotoNames) {
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra(PICKED_PHOTO_NAME_KEY, pickedPhotoName);
+        resultIntent.putStringArrayListExtra(PICKED_PHOTO_NAMES_KEY, pickedPhotoNames);
+        setResult(RESULT_OK, resultIntent);
         finishedWithoutAnimation();
     }
 

@@ -3,18 +3,21 @@ package siclo.com.ezphotopicker.ui;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 import siclo.com.ezphotopicker.api.models.EZPhotoPickConfig;
 import siclo.com.ezphotopicker.api.models.PhotoSource;
@@ -37,7 +40,8 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
      */
     private static boolean isStoringPhoto = false;
     private static boolean isOpenedPhotoPick = false;
-    private static Uri photoUri;
+    private static List<Uri> photoUriList = new ArrayList<>();
+    private static List<String> storedPhotoNames = new ArrayList<>();
 
     private static final int STORE_SUCCESS_MSG = 0;
     private static final int STORE_FAIL_MSG = 1;
@@ -48,6 +52,7 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
     private PhotoGenerator photoGenerator;
     private EZPhotoPickConfig eZPhotoPickConfig;
     private String storingPhotoName;
+    private boolean isAllowMultipleSelect;
 
     PhotoIntentHelperPresenter(PhotoIntentHelperContract.View view, PhotoUriHelper photoUriHelper, PhotoGenerator photoGenerator, PhotoIntentHelperStorage photoIntentHelperStorage, EZPhotoPickConfig eZPhotoPickConfig) {
         this.view = view;
@@ -55,6 +60,7 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
         this.photoGenerator = photoGenerator;
         this.photoIntentHelperStorage = photoIntentHelperStorage;
         this.eZPhotoPickConfig = eZPhotoPickConfig;
+        isAllowMultipleSelect = eZPhotoPickConfig.isAllowMultipleSelect && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2;
     }
 
     @Override
@@ -63,30 +69,41 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
             throw PhotoIntentException.getNullPhotoPickConfigException();
         }
 
-        if(isStoringPhoto){
+        if (isStoringPhoto) {
             view.showLoading();
             return;
         }
 
-        if(isOpenedPhotoPick){
+        if (isOpenedPhotoPick) {
             return;
         }
 
-        if(eZPhotoPickConfig.photoSource == PhotoSource.CAMERA){
+        if (eZPhotoPickConfig.photoSource == PhotoSource.CAMERA) {
             view.requestCameraAndExternalStoragePermission(eZPhotoPickConfig.needToAddToGallery);
-        }else{
+        } else {
             onPickPhotoWithGalery();
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onPhotoPickedFromGallery(final Intent data) {
-        photoUri = data.getData();
-        boolean isPhotoUriPointToExternalStorage = isCurrentPhotoUriPointToExternalStorage();
-        if(isPhotoUriPointToExternalStorage){
-            view.requestReadExternalStoragePermission();
-            return;
+        photoUriList.clear();
+        if (isAllowMultipleSelect && data.getClipData()!= null) {
+            for (int i = 0; i < data.getClipData().getItemCount(); i++) {
+                photoUriList.add(data.getClipData().getItemAt(i).getUri());
+            }
+        } else {
+            photoUriList.add(data.getData());
         }
+        for (Uri photoUri : photoUriList) {
+            boolean isPhotoUriPointToExternalStorage = isUriPointToExternalStorage(photoUri);
+            if (!isPhotoUriPointToExternalStorage) {
+                view.requestReadExternalStoragePermission();
+                return;
+            }
+        }
+
         onPhotoPicked();
     }
 
@@ -96,62 +113,68 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
     }
 
     private void onPhotoPicked() {
-        isOpenedPhotoPick =false;
+        isOpenedPhotoPick = false;
         isStoringPhoto = true;
         view.showLoading();
-        processPickedUriInBackground(photoUri);
+        processPickedUrisInBackground();
     }
 
-    private boolean isCurrentPhotoUriPointToExternalStorage() {
+    private boolean isUriPointToExternalStorage(Uri photoUri) {
         return photoUri.toString().contains(Environment.getExternalStorageDirectory().getAbsolutePath());
     }
 
-    private void processPickedUriInBackground(final Uri photoUri) {
-
-        generateStoringPhotoName();
-        photoIntentHelperStorage.storeLatestStoredPhotoName(storingPhotoName);
-        photoIntentHelperStorage.storeLatestStoredPhotoDir(eZPhotoPickConfig.storageDir);
-
+    private void processPickedUrisInBackground() {
         new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Bitmap pickingPhoto = photoGenerator.generatePhotoWithValue(photoUri, eZPhotoPickConfig);
-
-                        Bitmap.CompressFormat bitmapConfig = photoUriHelper.getUriPhotoBitmapFormat(photoUri);
-
-                        photoIntentHelperStorage.storePhotoBitmap(pickingPhoto, bitmapConfig, eZPhotoPickConfig.storageDir, storingPhotoName);
-
-                        Bitmap thumbnail;
-                        if(eZPhotoPickConfig.needToExportThumbnail){
-                            thumbnail = photoGenerator.scalePhotoByMaxSize(eZPhotoPickConfig.exportingThumbSize, pickingPhoto);
-                            photoIntentHelperStorage.storePhotoBitmapThumbnail(thumbnail, bitmapConfig, eZPhotoPickConfig.storageDir, storingPhotoName);
-                        }
-
-                        if(eZPhotoPickConfig.needToAddToGallery){
-                            addLastestCapturedPhotoToGallery(pickingPhoto);
-                        }
-
-                        photoPickHandler.sendEmptyMessage(STORE_SUCCESS_MSG);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        photoPickHandler.sendEmptyMessage(STORE_FAIL_MSG);
-                    }
-
+            @Override
+            public void run() {
+                for (Uri photoUri : photoUriList) {
+                    processPickedUri(photoUri);
                 }
+                photoPickHandler.sendEmptyMessage(STORE_SUCCESS_MSG);
+            }
         }).start();
+    }
+
+    private void processPickedUri(Uri photoUri) {
+        generateStoringPhotoName();
+        try {
+            Bitmap pickingPhoto = photoGenerator.generatePhotoWithValue(photoUri, eZPhotoPickConfig);
+
+            Bitmap.CompressFormat bitmapConfig = photoUriHelper.getUriPhotoBitmapFormat(photoUri);
+
+            photoIntentHelperStorage.storePhotoBitmap(pickingPhoto, bitmapConfig, eZPhotoPickConfig.storageDir, storingPhotoName);
+
+            Bitmap thumbnail;
+            if (eZPhotoPickConfig.needToExportThumbnail) {
+                thumbnail = photoGenerator.scalePhotoByMaxSize(eZPhotoPickConfig.exportingThumbSize, pickingPhoto);
+                photoIntentHelperStorage.storePhotoBitmapThumbnail(thumbnail, bitmapConfig, eZPhotoPickConfig.storageDir, storingPhotoName);
+            }
+
+            if (needToAddToGalery()) {
+                addLastestCapturedPhotoToGallery(pickingPhoto);
+            }
+            storedPhotoNames.add(storingPhotoName);
+            photoIntentHelperStorage.storeLatestStoredPhotoName(storingPhotoName);
+            photoIntentHelperStorage.storeLatestStoredPhotoDir(eZPhotoPickConfig.storageDir);
+        } catch (IOException e) {
+            e.printStackTrace();
+            photoPickHandler.sendEmptyMessage(STORE_FAIL_MSG);
+        }
+    }
+
+    private boolean needToAddToGalery() {
+        return eZPhotoPickConfig.needToAddToGallery && eZPhotoPickConfig.photoSource == PhotoSource.CAMERA;
     }
 
     private void generateStoringPhotoName() {
 
-        if(!TextUtils.isEmpty(eZPhotoPickConfig.exportedPhotoName)){
-            storingPhotoName = eZPhotoPickConfig.exportedPhotoName;
+        if (eZPhotoPickConfig.isGenerateUniqueName || isPickingMultiplePhotoFromGalery()) {
+            storingPhotoName = UUID.randomUUID().toString();
             return;
         }
 
-        if(eZPhotoPickConfig.isGenerateUniqueName){
-            String currentTimeStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss'Z'").format(new Date());
-            storingPhotoName = currentTimeStr;
+        if (!TextUtils.isEmpty(eZPhotoPickConfig.exportedPhotoName)) {
+            storingPhotoName = eZPhotoPickConfig.exportedPhotoName;
             return;
         }
 
@@ -159,11 +182,16 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
 
     }
 
+    private boolean isPickingMultiplePhotoFromGalery() {
+        return isAllowMultipleSelect && eZPhotoPickConfig.photoSource == PhotoSource.GALERY;
+    }
+
     @Override
     public void onPhotoPickedFromCamera(File internalDir) {
 //        view.notifyGalleryDataChanged(exportedPhotoUri);
         File photoFile = new File(internalDir, PhotoIntentContentProvider.TEMP_PHOTO_NAME);
-        photoUri = Uri.fromFile(photoFile);
+        photoUriList.clear();
+        photoUriList.add(Uri.fromFile(photoFile));
         onPhotoPicked();
     }
 
@@ -173,7 +201,7 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
             String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).toString();
             File myDir = new File(root);
             myDir.mkdirs();
-            String fname = calendar.getTime().getTime()+".jpg";
+            String fname = calendar.getTime().getTime() + ".jpg";
             File file = new File(myDir, fname);
             if (file.exists()) file.delete();
             FileOutputStream out = new FileOutputStream(file);
@@ -204,14 +232,15 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
     }
 
 
-
-    Handler photoPickHandler = new Handler(new Handler.Callback() {
+    private Handler photoPickHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             int what = msg.what;
-            switch (what){
+            switch (what) {
                 case STORE_SUCCESS_MSG:
-                    view.finishPickPhotoWithSuccessResult();
+                    finishPickPhotoWithSuccessResult();
+                    photoUriList.clear();
+                    storedPhotoNames.clear();
                     break;
                 case STORE_FAIL_MSG:
                     view.showPickPhotoFromGalleryError(eZPhotoPickConfig.unexpectedErrorStringResource);
@@ -223,6 +252,12 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
         }
     });
 
+    private void finishPickPhotoWithSuccessResult(){
+        String pickedPhotoName = storedPhotoNames.get(storedPhotoNames.size()-1);
+        ArrayList<String> pickedPhotoNames = new ArrayList<>(storedPhotoNames);
+        view.finishPickPhotoWithSuccessResult(pickedPhotoName, pickedPhotoNames);
+    }
+
     private void onPickPhotoWithCamera() {
         isOpenedPhotoPick = true;
         view.openCamera();
@@ -230,6 +265,6 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
 
     private void onPickPhotoWithGalery() {
         isOpenedPhotoPick = true;
-        view.openGallery();
+        view.openGallery(isAllowMultipleSelect);
     }
 }
