@@ -1,11 +1,13 @@
 package siclo.com.ezphotopicker.storage;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 
 import java.io.FileInputStream;
@@ -27,7 +29,7 @@ public class PhotoGenerator {
     }
 
 
-    private int getCapturedExifOrientation(String path) {
+    private int getExifOrientationOfInternalPath(String path) {
         try {
             ExifInterface exif = new ExifInterface(path);
             return exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
@@ -36,7 +38,7 @@ public class PhotoGenerator {
         }
     }
 
-    private int getImageOrientation(int exifOrientation) {
+    private int getImageOrientationFromExif(int exifOrientation) {
         int rotate = 0;
         switch (exifOrientation) {
             case ExifInterface.ORIENTATION_ROTATE_270:
@@ -54,9 +56,35 @@ public class PhotoGenerator {
         return rotate;
     }
 
-    private int getImageOrientation(String path) {
-        int exif = getCapturedExifOrientation(path);
-        return getImageOrientation(exif);
+    private int getImageOrientation(Uri pathUri) {
+        String internalPath = "file://";
+        boolean isPathFromInternalStorage = pathUri.toString().contains(internalPath);
+
+        if(isPathFromInternalStorage){
+            String path = pathUri.getPath();
+            int exif = getExifOrientationOfInternalPath(path);
+            return getImageOrientationFromExif(exif);
+        }
+        return getOrientationOfPublicUri(pathUri);
+    }
+
+    private  int getOrientationOfPublicUri(Uri photoUri) {
+        Cursor cursor = context.getContentResolver().query(photoUri,
+                new String[]{MediaStore.Images.ImageColumns.ORIENTATION}, null, null, null);
+
+        if(cursor == null){
+            return 0;
+        }
+
+        if (cursor.getCount() != 1) {
+            cursor.close();
+            return -1;
+        }
+
+        cursor.moveToFirst();
+        int orientation = cursor.getInt(0);
+        cursor.close();
+        return orientation;
     }
 
     private Bitmap generatePhotoByPathWithMaxSize(String photoPath, int maxSize) throws FileNotFoundException {
@@ -107,7 +135,7 @@ public class PhotoGenerator {
             return generatingPhotoBitmap;
         }
 
-        int rotate = getImageOrientation(pickedStringURI.getPath());
+        int rotate = getImageOrientation(pickedStringURI);
         if (rotate == 0) {
             return generatingPhotoBitmap;
         }
