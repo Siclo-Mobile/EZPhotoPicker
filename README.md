@@ -28,8 +28,8 @@ For full example, please refer to sample
 
 ```javascript
 EZPhotoPickConfig config = new EZPhotoPickConfig();
-config.photoSource = PhotoSource.GALERY; // or PhotoSource.CAMERA
-config.isAllowMultipleSelect = true; // only for GALERY pick and API >18
+config.photoSource = PhotoSource.GALL:ERY; // or PhotoSource.CAMERA
+config.isAllowMultipleSelect = true; // only for GALLERY pick and API >18
 config.maxExportingSize = 1000;
 EZPhotoPick.startPhotoPickActivity(MainActivity.this, config);
 ```
@@ -45,7 +45,7 @@ EZPhotoPick.startPhotoPickActivity(MainActivity.this, config);
             return;
         }
 
-        if (requestCode == EZPhotoPick.PHOTO_PICK_GALERY_REQUEST_CODE || requestCode == EZPhotoPick.PHOTO_PICK_CAMERA_REQUEST_CODE) {
+        if (requestCode == EZPhotoPick.PHOTO_PICK_GALLERY_REQUEST_CODE || requestCode == EZPhotoPick.PHOTO_PICK_CAMERA_REQUEST_CODE) {
               Bitmap pickedPhoto = new EZPhotoPickStorage(this).loadLatestStoredPhotoBitmap();
               //do something with the bitmap
         }
@@ -62,7 +62,7 @@ EZPhotoPick.startPhotoPickActivity(MainActivity.this, config);
     String photoPath = ezPhotoPickStorage.getAbsolutePathOfStoredPhoto(photoDir, photoName);
     //do something with the path
 ```
-###### Or multiple photos (Only for galery pick)
+###### Or multiple photos (Only for gallery pick)
 ```javascript
     ArrayList<String> pickedPhotoNames = data.getStringArrayListExtra(EZPhotoPick.PICKED_PHOTO_NAMES_KEY);
     for(String photoName: photoNames){
