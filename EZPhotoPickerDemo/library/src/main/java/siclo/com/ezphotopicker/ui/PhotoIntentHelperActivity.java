@@ -115,6 +115,28 @@ public class PhotoIntentHelperActivity
         finishedWithoutAnimation();
     }
 
+    /**
+     * checkPermissions: Used as a wrapper over ActivityCompat.checkSelfPermission to validate if a
+     * number of Permissions have been granted
+     * @param permissions: The requested Permissions.
+     * @return True is all permissions have been graned, otherwise false.
+     */
+    private boolean checkPermissions(String[] permissions) {
+
+        for(String permission: permissions) {
+
+            if(ActivityCompat.checkSelfPermission(PhotoIntentHelperActivity.this, permission) != PackageManager.PERMISSION_GRANTED) {
+
+                return false;
+
+            }
+
+        }
+
+        return true;
+
+    }
+
     @Override
     public void requestCameraAndExternalStoragePermission(boolean needToAddToGallery) {
         String[] permissions;
@@ -123,9 +145,14 @@ public class PhotoIntentHelperActivity
         } else {
             permissions = new String[]{Manifest.permission.CAMERA};
         }
-        ActivityCompat.requestPermissions(PhotoIntentHelperActivity.this,
-                permissions,
-                REQUEST_CAMERA_PERMISSION);
+
+        if(checkPermissions(permissions)) {
+            presenter.onRequestCameraPermissionGranted();
+        } else {
+            ActivityCompat.requestPermissions(PhotoIntentHelperActivity.this,
+                    permissions,
+                    REQUEST_CAMERA_PERMISSION);
+        }
     }
 
     @Override
@@ -137,9 +164,14 @@ public class PhotoIntentHelperActivity
 
     @Override
     public void requestReadExternalStoragePermission() {
-        ActivityCompat.requestPermissions(PhotoIntentHelperActivity.this,
-                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                REQUEST_READ_EXTERNAL_STORAGE_PERMISSION);
+        String[] permissions = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE};
+        if(checkPermissions(permissions)) {
+            presenter.onRequestCameraPermissionGranted();
+        } else {
+            ActivityCompat.requestPermissions(PhotoIntentHelperActivity.this,
+                    permissions,
+                    REQUEST_READ_EXTERNAL_STORAGE_PERMISSION);
+        }
     }
 
     @Override
