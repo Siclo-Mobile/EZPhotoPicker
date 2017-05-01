@@ -7,5 +7,5 @@ import java.io.Serializable;
  */
 
 public enum PhotoSource implements Serializable {
-    CAMERA, GALERY
+    CAMERA, GALLERY
 }

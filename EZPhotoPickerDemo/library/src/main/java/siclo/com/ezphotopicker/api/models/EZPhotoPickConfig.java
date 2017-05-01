@@ -23,6 +23,7 @@ public class EZPhotoPickConfig implements Serializable {
      */
     public String storageDir;
 
+
     /**
      * rotate the photo to right direction by exif value
      * it happen many times in Samsung phone

@@ -81,7 +81,7 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
         if (eZPhotoPickConfig.photoSource == PhotoSource.CAMERA) {
             view.requestCameraAndExternalStoragePermission(eZPhotoPickConfig.needToAddToGallery);
         } else {
-            onPickPhotoWithGalery();
+            onPickPhotoWithGallery();
         }
     }
 
@@ -150,7 +150,7 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
                 photoIntentHelperStorage.storePhotoBitmapThumbnail(thumbnail, bitmapConfig, eZPhotoPickConfig.storageDir, storingPhotoName);
             }
 
-            if (needToAddToGalery()) {
+            if (needToAddToGallery()) {
                 addLastestCapturedPhotoToGallery(pickingPhoto);
             }
             storedPhotoNames.add(storingPhotoName);
@@ -162,13 +162,13 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
         }
     }
 
-    private boolean needToAddToGalery() {
+    private boolean needToAddToGallery() {
         return eZPhotoPickConfig.needToAddToGallery && eZPhotoPickConfig.photoSource == PhotoSource.CAMERA;
     }
 
     private void generateStoringPhotoName() {
 
-        if (eZPhotoPickConfig.isGenerateUniqueName || isPickingMultiplePhotoFromGalery()) {
+        if (eZPhotoPickConfig.isGenerateUniqueName || isPickingMultiplePhotoFromGallery()) {
             storingPhotoName = UUID.randomUUID().toString();
             return;
         }
@@ -182,8 +182,8 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
 
     }
 
-    private boolean isPickingMultiplePhotoFromGalery() {
-        return isAllowMultipleSelect && eZPhotoPickConfig.photoSource == PhotoSource.GALERY;
+    private boolean isPickingMultiplePhotoFromGallery() {
+        return isAllowMultipleSelect && eZPhotoPickConfig.photoSource == PhotoSource.GALLERY;
     }
 
     @Override
@@ -263,7 +263,7 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
         view.openCamera();
     }
 
-    private void onPickPhotoWithGalery() {
+    private void onPickPhotoWithGallery() {
         isOpenedPhotoPick = true;
         view.openGallery(isAllowMultipleSelect);
     }

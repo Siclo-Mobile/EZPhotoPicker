@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 EZPhotoPickConfig config = new EZPhotoPickConfig();
-                config.photoSource = PhotoSource.GALERY;
+                config.photoSource = PhotoSource.GALLERY;
                 config.needToExportThumbnail = true;
                 config.isAllowMultipleSelect = true;
                 config.storageDir = DEMO_PHOTO_PATH;
@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        if (requestCode == EZPhotoPick.PHOTO_PICK_GALERY_REQUEST_CODE) {
+        if (requestCode == EZPhotoPick.PHOTO_PICK_GALLERY_REQUEST_CODE) {
             try {
                 ArrayList<String> pickedPhotoNames = data.getStringArrayListExtra(EZPhotoPick.PICKED_PHOTO_NAMES_KEY);
                 showPickedPhotos(DEMO_PHOTO_PATH, pickedPhotoNames);
