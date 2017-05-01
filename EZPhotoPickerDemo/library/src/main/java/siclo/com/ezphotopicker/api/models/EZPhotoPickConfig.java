@@ -65,6 +65,10 @@ public class EZPhotoPickConfig implements Serializable {
     /**
      * exporting photo size to internal storage,
      * default is 0, mean original size
+     * for eg:
+     * exportingSize = 1000;
+     * your photo : W x H : 2000 x 500;
+     * then after picking photo: W x H: 1000 x 250.
      */
     public int exportingSize = 0;
 
