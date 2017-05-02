@@ -166,7 +166,7 @@ public class PhotoIntentHelperActivity
     public void requestReadExternalStoragePermission() {
         String[] permissions = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE};
         if(checkPermissions(permissions)) {
-            presenter.onRequestCameraPermissionGranted();
+            presenter.onRequestReadExternalPermissionGranted();
         } else {
             ActivityCompat.requestPermissions(PhotoIntentHelperActivity.this,
                     permissions,
