@@ -1,11 +1,11 @@
-#EZPhotoPicker
+# EZPhotoPicker
 If you want to pick up a photo from  the gallery and camera, store it somewhere then do something, this library will be the best choice for you. It will handle all the storing, scaling, rotating, threading, loading dialog. Easy to start a photo intent, easy to get the result, you won't need to code a lot as what you used to do.
  
 It also help you to handle about realtime permission without any lines of code.
 
 Try it, you will see what I mean.
 
-##Intergrating gradle
+## Intergrating gradle
 
 Add this to your module's build.gradle
 ```javascript
@@ -21,21 +21,21 @@ repositories {
 compile 'com.siclo.ezphotopick:library:1.0.6'
 ```
 
-##Usage
+## Usage
 For full example, please refer to sample
 
-####Start image picker activity
+#### Start image picker activity
 
 ```javascript
 EZPhotoPickConfig config = new EZPhotoPickConfig();
-config.photoSource = PhotoSource.GALL:ERY; // or PhotoSource.CAMERA
+config.photoSource = PhotoSource.GALLERY; // or PhotoSource.CAMERA
 config.isAllowMultipleSelect = true; // only for GALLERY pick and API >18
 config.maxExportingSize = 1000;
 EZPhotoPick.startPhotoPickActivity(MainActivity.this, config);
 ```
 *For more configurations, check EZPhotoPickConfig class*
 
-####Receive result `onActivityResult`
+#### Receive result `onActivityResult`
 ###### For simplest way, load and use the bitmap, and dont care about the photo name/path:
 ```
 @Override
@@ -71,25 +71,25 @@ EZPhotoPick.startPhotoPickActivity(MainActivity.this, config);
 ```
 *For more public api for the storage, check EZPhotoPickStorage class*
 
-##Contribution
+## Contribution
 
-####Questions
+#### Questions
 If you have any questions regarding EZPhotoPicker,create an Issue
 
-####Feature request, new features?
+#### Feature request, new features?
 We are still working on it to add more useful option/feature,
 to create a new feature request, open an issue
 
 I'll try to answer as soon as I find the time.
 
-####Pull requests welcome
+#### Pull requests welcome
 
 Feel free to contribute to EZPhotoPicker.
 
 Either you found a bug or have created a new and awesome feature, just create a pull request.
 
 
-##License
+## License
 Copyright 2016 Siclo Mobile Vietnam
 ```
 Licensed under the Apache License, Version 2.0 (the "License");
