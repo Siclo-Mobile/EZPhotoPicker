@@ -238,19 +238,27 @@ class PhotoIntentHelperPresenter implements PhotoIntentHelperContract.Presenter 
             int what = msg.what;
             switch (what) {
                 case STORE_SUCCESS_MSG:
+                    if(storedPhotoNames.size() == 0){
+                        onPickedPhotoFail();
+                        break;
+                    }
                     finishPickPhotoWithSuccessResult();
                     photoUriList.clear();
                     storedPhotoNames.clear();
                     break;
                 case STORE_FAIL_MSG:
-                    view.showPickPhotoFromGalleryError(eZPhotoPickConfig.unexpectedErrorStringResource);
-                    view.finishWithNoResult();
+                    onPickedPhotoFail();
                     break;
             }
             isStoringPhoto = false;
             return false;
         }
     });
+
+    private void onPickedPhotoFail() {
+        view.showPickPhotoFromGalleryError(eZPhotoPickConfig.unexpectedErrorStringResource);
+        view.finishWithNoResult();
+    }
 
     private void finishPickPhotoWithSuccessResult(){
         String pickedPhotoName = storedPhotoNames.get(storedPhotoNames.size()-1);
