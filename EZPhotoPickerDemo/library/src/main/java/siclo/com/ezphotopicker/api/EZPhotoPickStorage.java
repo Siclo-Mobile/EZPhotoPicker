@@ -36,6 +36,15 @@ public class EZPhotoPickStorage {
         return loadStoredPhotoBitmap(storedPhotoDir, storedPhotoName, maxScaleSize);
     }
 
+    public String getLatestStoredPhotoBitmapAbsolutePath() throws IOException {
+        return  photoIntentHelperStorage.getLatestStoredPhotoBitmapAbsolutePath();
+    }
+
+    public String getLatestStoredPhotoBitmapThumbnailAbsolutePath() throws IOException {
+        return  photoIntentHelperStorage.getLatestStoredPhotoBitmapThumbnailAbsolutePath();
+    }
+
+
     public Bitmap loadStoredPhotoBitmap(String storedPhotoDir, String storedPhotoName) throws IOException {
         return loadStoredPhotoBitmap(storedPhotoDir, storedPhotoName, 0);
     }
