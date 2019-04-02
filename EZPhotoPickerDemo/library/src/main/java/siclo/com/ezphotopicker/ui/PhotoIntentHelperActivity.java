@@ -52,9 +52,10 @@ public class PhotoIntentHelperActivity
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        int screenOrientation = getIntent().getIntExtra(PhotoIntentConstants.SCREEN_ORIENTATION, ActivityInfo.SCREEN_ORIENTATION_SENSOR);
-        setRequestedOrientation(screenOrientation);
-
+        if (Build.VERSION.SDK_INT < 26) {
+            int screenOrientation = getIntent().getIntExtra(PhotoIntentConstants.SCREEN_ORIENTATION, ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+            setRequestedOrientation(screenOrientation);
+        }
         setContentView(R.layout.photo_pick_activity);
         loadingView = findViewById(R.id.loading_view);
         EZPhotoPickConfig = (EZPhotoPickConfig) getIntent().getSerializableExtra(PhotoIntentConstants.PHOTO_PICK_CONFIG_KEY);
